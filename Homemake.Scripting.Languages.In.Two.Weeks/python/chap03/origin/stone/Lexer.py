@@ -2,6 +2,7 @@ import re
 import io
 
 from stone.LineNumberReader import LineNumberReader
+from stone.ParseException import ParseException
 from stone.Token import Token
 
 class Lexer:
@@ -49,7 +50,7 @@ class Lexer:
                 self.addToken(lineNo, matcher)
                 pos = matcher.end()
             else:
-                ParseException("badtokenatline" + str(lineNo))
+                raise ParseException("bad token at line " + str(lineNo))
 
     def addToken(self, lineNo, matcher):
         m = matcher.group(1)
