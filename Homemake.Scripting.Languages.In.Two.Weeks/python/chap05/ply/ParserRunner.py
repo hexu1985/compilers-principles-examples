@@ -1,6 +1,5 @@
 import sys
-from stone.Lexer import Lexer
-from stone.Token import Token
+from stone import Lexer, Token, BasicParser
 
 def main():
     file_path = "test.txt"

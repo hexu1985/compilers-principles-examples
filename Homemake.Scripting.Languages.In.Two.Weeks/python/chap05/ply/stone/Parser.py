@@ -1,28 +1,28 @@
 import abc
-from stone.ast import ASTree
-from stone.ast import ASTLeaf
-from stone.ast import ASTList
+from . Token import Token
+from . ast import ASTree, ASTLeaf, ASTList
+from . ParseException import ParseException
 
 factoryName = "create"
 class Factory:
     @abc.abstractmethod
-    def make0(arg):
+    def make0(self, arg):
         pass
 
-    def make(arg):
+    def make(self, arg):
         self.make0(arg)
 
     @staticmethod
-    getForASTList(clazz):
+    def getForASTList(clazz):
         f = Factory.get(clazz, list)
         if f == None:
             class ConcreteFactory(Factory):
-                def make0(arg):
+                def make0(self, arg):
                     results = arg
                     if len(results) == 1:
-                        return results.get(0)
-                    else
-                    return ASTList(results)
+                        return results[0]
+                    else:
+                        return ASTList(results)
             f = ConcreteFactory()
         return f
 
@@ -36,21 +36,20 @@ class Factory:
                 def __init__(self, m):
                     self.m = m
 
-                def make0(arg):
+                def make0(self, arg):
                     return self.m(arg)
             return ConcreteFactory(m)
         except AttributeError as e:
             pass
 
         try:
-            c = getattr(clazz, "__init__")
             class ConcreteFactory(Factory):
-                def __init__(self, c):
-                    self.c = c
+                def __init__(self, clazz):
+                    self.clazz = clazz
 
-                def make0(arg):
-                    return self.c(arg)
-            return ConcreteFactory(c)
+                def make0(self, arg):
+                    return self.clazz(arg)
+            return ConcreteFactory(clazz)
         except AttributeError as e:
             raise RuntimeError(e)
 
@@ -70,7 +69,7 @@ class Tree(Element):
         self.parser = p
 
     def parse(self, lexer, res):
-        res.add(self.parser.parse(lexer))
+        res.append(self.parser.parse(lexer))
 
     def match(self, lexer):
         return self.parser.match(lexer)
@@ -85,7 +84,7 @@ class OrTree(Element):
         if p == None:
             raise ParseException(lexer.peek(0))
         else:
-            res.add(p.parse(lexer))
+            res.append(p.parse(lexer))
 
     def match(self, lexer):
         return self.choose(lexer) != None
@@ -99,6 +98,8 @@ class OrTree(Element):
 
     def insert(self, p):
         self.parsers = [p] + self.parsers
+        if p.factory == None:
+            print("p.factory is None")
 
 
 class Repeat(Element):
@@ -110,7 +111,7 @@ class Repeat(Element):
         while self.parser.match(lexer):
             t = self.parser.parse(lexer)
             if isinstance(t, ASTList) or t.numChildren() > 0:
-                res.add(t)
+                res.append(t)
             if self.onlyOnce:
                 break
 
@@ -128,7 +129,7 @@ class AToken(Element):
         t = lexer.read()
         if self.test(t):
             leaf = self.factory.make(t)
-            res.add(leaf)
+            res.append(leaf)
         else:
             raise ParseException(t)
 
@@ -146,7 +147,7 @@ class IdToken(AToken):
         self.reserved = r if r != None else set()
 
     def test(self, t):
-        return t.isIdentifier() and (t.getText() not in reserved)
+        return t.isIdentifier() and (t.getText() not in self.reserved)
 
 
 class NumToken(AToken):
@@ -177,13 +178,13 @@ class Leaf(Element):
                     self.find(res, t)
                     return
 
-        if len(tokens) > 0:
+        if len(self.tokens) > 0:
             raise ParseException(str(tokens[0]) + " expected.", t)
         else:
             raise ParseException(str(t))
 
     def find(self, res, t):
-        res.add(t)
+        res.append(t)
 
     def match(self, lexer):
         t = lexer.peek(0)
@@ -237,7 +238,7 @@ class Expr(Element):
             right = self.doShift(lexer, right, prec.value)
             prec = self.nextOperator(lexer)
 
-        res.add(right)
+        res.append(right)
 
     def doShift(self, lexer, left, prec):
         lyst = list()
@@ -271,14 +272,18 @@ class Expr(Element):
 
 
 class Parser:
-    def __init__(self, arg):
-        if isinstance(arg, Parser):
-            self.elements = arg.elements
-            self.factory = arg.factory
-        else:
-            clazz = arg
-            self.reset(clazz)
-
+    def __init__(self, clazz):
+        self.elements = None
+        self.factory = None
+        self.reset(clazz)
+        if self.factory == None:
+            print("self.facotry is None")
+        
+    def clone(self):
+        p = Parser(None)
+        p.elements = self.elements
+        p.factory = self.factory
+    
     def parse(self, lexer):
         results = list()
         for e in self.elements:
@@ -286,11 +291,11 @@ class Parser:
 
         return self.factory.make(results)
 
-    def match(lexer):
+    def match(self, lexer):
         if len(self.elements) == 0:
             return True
         else:
-            e = self.elements.get(0)
+            e = self.elements[0]
             return e.match(lexer)
 
     @staticmethod
@@ -299,14 +304,12 @@ class Parser:
 
     def reset(self, clazz=None):
         self.elements = list()
-        if clazz == None:
-            self.factory = None
-        else:
+        if clazz != None:
             self.factory = Factory.getForASTList(clazz)
         return self
 
     def number(self, clazz=None):
-        self.elements.add(NumToken(clazz))
+        self.elements.append(NumToken(clazz))
         return self
 
     def identifier(self, *args):
@@ -319,41 +322,41 @@ class Parser:
             reserved = args[1]
         else:
             raise RuntimeError("invalid number of args: {}".format(len(args)))
-        self.elements.add(IdToken(clazz, reserved))
+        self.elements.append(IdToken(clazz, reserved))
         return self
 
     def string(self, clazz=None):
-        self.elements.add(StrToken(clazz))
+        self.elements.append(StrToken(clazz))
         return self
             
     def token(self, *pat):
-        self.elements.add(Leaf(pat))
+        self.elements.append(Leaf(pat))
         return self
 
     def sep(self, *pat):
-        self.elements.add(Skip(pat))
+        self.elements.append(Skip(pat))
         return self
 
     def ast(self, p):
-        self.elements.add(Tree(p))
+        self.elements.append(Tree(p))
         return self
 
     def or_(self, *p):
-        self.elements.add(OrTree(p))
+        self.elements.append(OrTree(p))
         return self
 
     def maybe(self, p):
-        p2 = Parser(p)
+        p2 = p.clone()
         p2.reset()
-        self.elements.add(OrTree([p, p2]))
+        self.elements.append(OrTree([p, p2]))
         return self
 
     def option(self, p):
-        self.elements.add(Repeat(p, once=true))
+        self.elements.append(Repeat(p, once=True))
         return self
 
     def repeat(self, p):
-        self.elements.add(Repeat(p, once=false))
+        self.elements.append(Repeat(p, once=False))
         return self
 
     def expression(self, *args):
@@ -361,15 +364,16 @@ class Parser:
         subexp = None
         operators = None
         if len(args) == 2:
-            subexp, operators = *args
+            subexp, operators = args
         elif len(args) == 3:
-            clazz, subexp, operators = *args
+            clazz, subexp, operators = args
         else:
             raise RuntimeError("invalid number of args: {}".format(len(args)))
-        self.elements.add(Expr(clazz, subexp, operators))
+        self.elements.append(Expr(clazz, subexp, operators))
+        return self
 
     def insertChoice(self, p):
-        e = self.elements.get(0)
+        e = self.elements[0]
         if isinstance(e, OrTree):
             e.insert(p)
         else:

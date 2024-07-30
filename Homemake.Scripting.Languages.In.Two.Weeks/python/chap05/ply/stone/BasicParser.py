@@ -1,8 +1,25 @@
+from . Token import Token
+from . Parser import Parser, Operators
+from . ast import PrimaryExpr, NumberLiteral, Name, StringLiteral, NegativeExpr, BinaryExpr, BlockStmnt, IfStmnt, WhileStmnt, NullStmnt
 
 class BasicParser:
     def __init__(self):
-        self.reserved = dict()
+        self.reserved = set()
+        self.reserved.add(";")
+        self.reserved.add("}")
+        self.reserved.add(Token.EOL)
+
         self.operators = Operators()
+        self.operators.add("=", 1, Operators.RIGHT);
+        self.operators.add("==", 2, Operators.LEFT);
+        self.operators.add(">", 2, Operators.LEFT);
+        self.operators.add("<", 2, Operators.LEFT);
+        self.operators.add("+", 3, Operators.LEFT);
+        self.operators.add("-", 3, Operators.LEFT);
+        self.operators.add("*", 4, Operators.LEFT);
+        self.operators.add("/", 4, Operators.LEFT);
+        self.operators.add("%", 4, Operators.LEFT);
+        
         self.expr0 = Parser.rule()
         self.primary = Parser.rule(PrimaryExpr).or_(
                 Parser.rule().sep("(").ast(self.expr0).sep(")"),
@@ -17,32 +34,19 @@ class BasicParser:
         self.statement0 = Parser.rule()
         self.block = Parser.rule(BlockStmnt) \
                             .sep("{").option(self.statement0) \
-                            .repeat(Parser.rule().sep(";", Token.EOL).option(statement0)) \
+                            .repeat(Parser.rule().sep(";", Token.EOL).option(self.statement0)) \
                             .sep("}")
 
-        self.simple = Parser.rule(PrimaryExpr).ast(expr)
-        self.statement = statement0.or_(
+        self.simple = Parser.rule(PrimaryExpr).ast(self.expr)
+        self.statement = self.statement0.or_(
                 Parser.rule(IfStmnt).sep("if").ast(self.expr).ast(self.block)
                                     .option(Parser.rule().sep("else").ast(self.block)),
                 Parser.rule(WhileStmnt).sep("while").ast(self.expr).ast(self.block),
                 self.simple)
 
-        self.program = Parser.rule().or_(self.statement, Parse.rule(NullStmnt)).sep(";", Token.EOL)
+        self.program = Parser.rule().or_(self.statement, Parser.rule(NullStmnt)).sep(";", Token.EOL)
 
-        self.reserved.add(";")
-        self.reserved.add("}")
-        self.reserved.add(Token.EOL)
 
-        self.operators.add("=", 1, Operators.RIGHT);
-        self.operators.add("==", 2, Operators.LEFT);
-        self.operators.add(">", 2, Operators.LEFT);
-        self.operators.add("<", 2, Operators.LEFT);
-        self.operators.add("+", 3, Operators.LEFT);
-        self.operators.add("-", 3, Operators.LEFT);
-        self.operators.add("*", 4, Operators.LEFT);
-        self.operators.add("/", 4, Operators.LEFT);
-        self.operators.add("%", 4, Operators.LEFT);
-
-    def parse(lexer):
+    def parse(self, lexer):
         return self.program.parse(lexer)
 

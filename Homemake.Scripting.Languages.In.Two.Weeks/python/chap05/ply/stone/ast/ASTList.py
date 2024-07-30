@@ -1,5 +1,5 @@
 import io
-from stone.ast.ASTree import ASTree
+from . ASTree import ASTree
 
 class ASTList(ASTree):
     def __init__(self, lyst):

@@ -1,4 +1,4 @@
-from stone.ast.ASTree import ASTree
+from . ASTree import ASTree
 
 class ASTLeaf(ASTree):
     def __init__(self, t):

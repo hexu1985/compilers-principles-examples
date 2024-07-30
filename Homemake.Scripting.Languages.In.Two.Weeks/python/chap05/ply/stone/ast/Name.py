@@ -1,8 +1,8 @@
 from . ASTLeaf import ASTLeaf
 
-class StringLiteral(ASTLeaf):
+class Name(ASTLeaf):
     def __init__(self, t):
         super().__init__(t)
 
-    def value(self):
+    def name(self):
         return self.token().getText()

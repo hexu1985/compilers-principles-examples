@@ -1,4 +1,4 @@
-from stone.ast.ASTList import ASTList
+from . ASTList import ASTList
 
 class WhileStmnt(ASTList):
     def __init__(self, c):
