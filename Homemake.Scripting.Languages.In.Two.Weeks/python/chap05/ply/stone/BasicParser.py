@@ -1,59 +1,48 @@
 
-class BasicParser: 
-    HashSet<String> reserved = new HashSet<String>();
-    Operators operators = new Operators();
-    Parser expr0 = rule();
-    Parser primary = rule(PrimaryExpr.class)
-        .or(rule().sep("(").ast(expr0).sep(")"),
-            rule().number(NumberLiteral.class),
-            rule().identifier(Name.class, reserved),
-            rule().string(StringLiteral.class));
-    Parser factor = rule().or(rule(NegativeExpr.class).sep("-").ast(primary),
-                              primary);                               
-    Parser expr = expr0.expression(BinaryExpr.class, factor, operators);
-
-    Parser statement0 = rule();
-    Parser block = rule(BlockStmnt.class)
-        .sep("{").option(statement0)
-        .repeat(rule().sep(";", Token.EOL).option(statement0))
-        .sep("}");
-    Parser simple = rule(PrimaryExpr.class).ast(expr);
-    Parser statement = statement0.or(
-            rule(IfStmnt.class).sep("if").ast(expr).ast(block)
-                               .option(rule().sep("else").ast(block)),
-            rule(WhileStmnt.class).sep("while").ast(expr).ast(block),
-            simple);
-
-    Parser program = rule().or(statement, rule(NullStmnt.class))
-                           .sep(";", Token.EOL);
-
+class BasicParser:
     def __init__(self):
-        self.reserved = set()
+        self.reserved = dict()
         self.operators = Operators()
-        self.expr0 = rule()
+        self.expr0 = Parser.rule()
+        self.primary = Parser.rule(PrimaryExpr).or_(
+                Parser.rule().sep("(").ast(self.expr0).sep(")"),
+                Parser.rule().number(NumberLiteral),
+                Parser.rule().identifier(Name, self.reserved),
+                Parser.rule().string(StringLiteral))
+        self.factor = Parser.rule().or_(
+                Parser.rule(NegativeExpr).sep("-").ast(self.primary),
+                self.primary)
+        self.expr = self.expr0.expression(BinaryExpr, self.factor, self.operators)
 
-        self.primary = rule(PrimaryExpr).or(
-                rule().sep("(").ast(self.expr0)
-    Parser primary = rule(PrimaryExpr.class)
-        .or(rule().sep("(").ast(expr0).sep(")"),
-            rule().number(NumberLiteral.class),
-            rule().identifier(Name.class, reserved),
-            rule().string(StringLiteral.class));
-        reserved.add(";");
-        reserved.add("}");
-        reserved.add(Token.EOL);
+        self.statement0 = Parser.rule()
+        self.block = Parser.rule(BlockStmnt) \
+                            .sep("{").option(self.statement0) \
+                            .repeat(Parser.rule().sep(";", Token.EOL).option(statement0)) \
+                            .sep("}")
 
-        operators.add("=", 1, Operators.RIGHT);
-        operators.add("==", 2, Operators.LEFT);
-        operators.add(">", 2, Operators.LEFT);
-        operators.add("<", 2, Operators.LEFT);
-        operators.add("+", 3, Operators.LEFT);
-        operators.add("-", 3, Operators.LEFT);
-        operators.add("*", 4, Operators.LEFT);
-        operators.add("/", 4, Operators.LEFT);
-        operators.add("%", 4, Operators.LEFT);
-    }
-    public ASTree parse(Lexer lexer) throws ParseException {
-        return program.parse(lexer);
-    }
-}
+        self.simple = Parser.rule(PrimaryExpr).ast(expr)
+        self.statement = statement0.or_(
+                Parser.rule(IfStmnt).sep("if").ast(self.expr).ast(self.block)
+                                    .option(Parser.rule().sep("else").ast(self.block)),
+                Parser.rule(WhileStmnt).sep("while").ast(self.expr).ast(self.block),
+                self.simple)
+
+        self.program = Parser.rule().or_(self.statement, Parse.rule(NullStmnt)).sep(";", Token.EOL)
+
+        self.reserved.add(";")
+        self.reserved.add("}")
+        self.reserved.add(Token.EOL)
+
+        self.operators.add("=", 1, Operators.RIGHT);
+        self.operators.add("==", 2, Operators.LEFT);
+        self.operators.add(">", 2, Operators.LEFT);
+        self.operators.add("<", 2, Operators.LEFT);
+        self.operators.add("+", 3, Operators.LEFT);
+        self.operators.add("-", 3, Operators.LEFT);
+        self.operators.add("*", 4, Operators.LEFT);
+        self.operators.add("/", 4, Operators.LEFT);
+        self.operators.add("%", 4, Operators.LEFT);
+
+    def parse(lexer):
+        return self.program.parse(lexer)
+

@@ -1,4 +1,7 @@
 import abc
+from stone.ast import ASTree
+from stone.ast import ASTLeaf
+from stone.ast import ASTList
 
 factoryName = "create"
 class Factory:
@@ -162,7 +165,218 @@ class StrToken(AToken):
         return t.isString()
 
 
+class Leaf(Element):
+    def __init__(self, pat):
+        self.tokens = pat
 
+    def parse(self, lexer, res):
+        t = lexer.read()
+        if t.isIdentifier():
+            for token in self.tokens:
+                if token == t.getText():
+                    self.find(res, t)
+                    return
+
+        if len(tokens) > 0:
+            raise ParseException(str(tokens[0]) + " expected.", t)
+        else:
+            raise ParseException(str(t))
+
+    def find(self, res, t):
+        res.add(t)
+
+    def match(self, lexer):
+        t = lexer.peek(0)
+        if t.isIdentifier():
+            for token in self.tokens:
+                if token == t.getText():
+                    return True
+
+        return False
+
+
+class Skip(Leaf):
+    def __init__(self, t):
+        super().__init__(t)
+
+    def find(self, res, t):
+        pass
+
+
+class Precedence:
+    def __init__(self, v, a):
+        self.value = v
+        self.leftAssoc = a
+
+
+class Operators:
+    LEFT = True
+    RIGHT = False
+
+    def __init__(self):
+        self.operators = dict()
+
+    def add(self, name, prec, leftAssoc):
+        self.operators[name] = Precedence(prec, leftAssoc)
+
+    def get(self, name):
+        return self.operators.get(name)
+
+
+class Expr(Element):
+    def __init__(self, clazz, exp, map_):
+        self.factory = Factory.getForASTList(clazz)
+        self.ops = map_
+        self.factor = exp
+
+    def parse(self, lexer, res):
+        right = self.factor.parse(lexer)
+
+        prec = self.nextOperator(lexer)
+        while prec != None:
+            right = self.doShift(lexer, right, prec.value)
+            prec = self.nextOperator(lexer)
+
+        res.add(right)
+
+    def doShift(self, lexer, left, prec):
+        lyst = list()
+        lyst.add(left)
+        lyst.add(ASTLeaf(lexer.read()))
+        right = self.factor.parse(lexer)
+        next_ = self.nextOperator(lexer)
+        while next_ != None and self.rightIsExpr(prec, next_):
+            right = self.doShift(lexer, right, next_.value)
+            next_ = self.nextOperator(lexer)
+
+        lyst.add(right)
+
+        return self.factory.make(lyst)
+
+    def nextOperator(self, lexer):
+        t = lexer.peek(0)
+        if t.isIdentifier():
+            return self.ops.get(t.getText())
+        else:
+            return None
+
+    def rightIsExpr(self, prec, nextPrec):
+        if nextPrec.leftAssoc:
+            return prec < nextPrec.value
+        else:
+            return prec <= nextPrec.value
+
+    def match(self, lexer):
+        return self.factor.match(lexer)
+
+
+class Parser:
+    def __init__(self, arg):
+        if isinstance(arg, Parser):
+            self.elements = arg.elements
+            self.factory = arg.factory
+        else:
+            clazz = arg
+            self.reset(clazz)
+
+    def parse(self, lexer):
+        results = list()
+        for e in self.elements:
+            e.parse(lexer, results)
+
+        return self.factory.make(results)
+
+    def match(lexer):
+        if len(self.elements) == 0:
+            return True
+        else:
+            e = self.elements.get(0)
+            return e.match(lexer)
+
+    @staticmethod
+    def rule(clazz=None):
+        return Parser(clazz)
+
+    def reset(self, clazz=None):
+        self.elements = list()
+        if clazz == None:
+            self.factory = None
+        else:
+            self.factory = Factory.getForASTList(clazz)
+        return self
+
+    def number(self, clazz=None):
+        self.elements.add(NumToken(clazz))
+        return self
+
+    def identifier(self, *args):
+        clazz = None
+        reserved = None
+        if len(args) == 1:
+            reserved = args[0]
+        elif len(args) == 2:
+            clazz = args[0]
+            reserved = args[1]
+        else:
+            raise RuntimeError("invalid number of args: {}".format(len(args)))
+        self.elements.add(IdToken(clazz, reserved))
+        return self
+
+    def string(self, clazz=None):
+        self.elements.add(StrToken(clazz))
+        return self
+            
+    def token(self, *pat):
+        self.elements.add(Leaf(pat))
+        return self
+
+    def sep(self, *pat):
+        self.elements.add(Skip(pat))
+        return self
+
+    def ast(self, p):
+        self.elements.add(Tree(p))
+        return self
+
+    def or_(self, *p):
+        self.elements.add(OrTree(p))
+        return self
+
+    def maybe(self, p):
+        p2 = Parser(p)
+        p2.reset()
+        self.elements.add(OrTree([p, p2]))
+        return self
+
+    def option(self, p):
+        self.elements.add(Repeat(p, once=true))
+        return self
+
+    def repeat(self, p):
+        self.elements.add(Repeat(p, once=false))
+        return self
+
+    def expression(self, *args):
+        clazz = None
+        subexp = None
+        operators = None
+        if len(args) == 2:
+            subexp, operators = *args
+        elif len(args) == 3:
+            clazz, subexp, operators = *args
+        else:
+            raise RuntimeError("invalid number of args: {}".format(len(args)))
+        self.elements.add(Expr(clazz, subexp, operators))
+
+    def insertChoice(self, p):
+        e = self.elements.get(0)
+        if isinstance(e, OrTree):
+            e.insert(p)
+        else:
+            otherwise = Parser(self)
+            self.reset()
+            or_(p, otherwise)
+        return self
 
 
         
