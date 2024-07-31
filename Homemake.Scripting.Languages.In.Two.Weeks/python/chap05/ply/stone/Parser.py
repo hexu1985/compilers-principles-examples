@@ -108,7 +108,7 @@ class Repeat(Element):
     def parse(self, lexer, res):
         while self.parser.match(lexer):
             t = self.parser.parse(lexer)
-            if isinstance(t, ASTList) or t.numChildren() > 0:
+            if (not isinstance(t, ASTList)) or t.numChildren() > 0:
                 res.append(t)
             if self.onlyOnce:
                 break
@@ -177,7 +177,7 @@ class Leaf(Element):
                     return
 
         if len(self.tokens) > 0:
-            raise ParseException(str(tokens[0]) + " expected.", t)
+            raise ParseException(str(self.tokens[0]) + " expected.", t)
         else:
             raise ParseException(str(t))
 

@@ -8,5 +8,5 @@ class NegativeExpr(ASTList):
         return self.child(0)
 
     def toString(self):
-        return "-" + str(self.operand())
+        return "(-" + self.operand().toString() +")"
 

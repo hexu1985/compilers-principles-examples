@@ -8,6 +8,7 @@ class WhileStmnt(ASTList):
         return self.child(0)
 
     def body(self):
+        tmp = self.child(1)
         return self.child(1)
 
     def toString(self):
