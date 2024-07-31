@@ -21,7 +21,7 @@ class ASTList(ASTree):
         for t in self._children:
             output.write(sep)
             sep = " "
-            output.write(t.toString())
+            output.write(str(t))
         output.write(')')
         return output.getvalue()
 

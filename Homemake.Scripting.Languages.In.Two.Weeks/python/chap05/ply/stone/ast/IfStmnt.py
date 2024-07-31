@@ -14,6 +14,5 @@ class IfStmnt(ASTList):
         return self.child(2) if self.numChildren() > 2 else None
 
     def toString(self):
-        return "(if " + self.condition().toString() + " " \
-                + self.thenBlock().toString() + " else " \
-                + ("" if self.elseBlock() == None else self.elseBlock().toString()) + ")"
+        return "(if " + str(self.condition()) + " " + str(self.thenBlock()) \
+                    + " else " + str(self.elseBlock()) + ")"

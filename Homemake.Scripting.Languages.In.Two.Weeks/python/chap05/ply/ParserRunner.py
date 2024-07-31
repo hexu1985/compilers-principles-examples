@@ -11,7 +11,7 @@ def main():
         bp = BasicParser()
         while l.peek(0) != Token.EOF:
             ast = bp.parse(l);
-            print("=> " + ast.toString())
+            print("=> " + str(ast))
 
 main()
 
