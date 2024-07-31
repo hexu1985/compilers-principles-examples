@@ -52,6 +52,9 @@ class Lexer:
             else:
                 raise ParseException("bad token at line " + str(lineNo))
 
+        self.queue.append(IdToken(lineNo, Token.EOL))
+
+
     def addToken(self, lineNo, matcher):
         m = matcher.group(1)
         if m is not None:   # is not a space

@@ -1,4 +1,5 @@
 import ply.lex as lex
+import warnings
 
 from stone.Token import Token
 
@@ -40,16 +41,18 @@ class StrToken(Token):
     def getText(self):
         return self.literal
 
+
 class Lexer:
     # List of token names.   This is always required
     tokens = (
             'NUMBER',
             'STRING',
             'IDENTIFIER',
-            'COMMENT',
+            'comment',
+            'newline',
             )
 
-    def t_COMMENT(self, t):
+    def t_comment(self, t):
         r'//.*'
         pass
 
@@ -71,8 +74,9 @@ class Lexer:
 
     # Define a rule so we can track line numbers
     def t_newline(self,t):
-        r'\n+'
-        t.lexer.lineno += len(t.value)
+        r'\n'
+        t.lexer.lineno += 1
+        return t
 
     # A string containing ignored characters (spaces and tabs)
     t_ignore = ' \t'
@@ -97,7 +101,10 @@ class Lexer:
             return StrToken(tok.lineno, tok.value)
         elif tok.type == "IDENTIFIER":
             return IdToken(tok.lineno, tok.value)
+        elif tok.type == "newline":
+            return IdToken(tok.lineno, Token.EOL)
         else:
+            warnings.warn("invalid token type: {}".format(tok.type))
             return Token(tok.lineno)
 
 def main():
