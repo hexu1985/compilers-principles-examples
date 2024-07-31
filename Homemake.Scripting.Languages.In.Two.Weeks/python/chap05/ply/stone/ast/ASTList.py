@@ -31,6 +31,3 @@ class ASTList(ASTree):
             if s:
                 return s
         return None
-
-    def __str__(self):
-        self.toString()

@@ -43,6 +43,7 @@ class StrToken(Token):
     def getText(self):
         return self.literal
 
+
 class Lexer:
     # List of token names.   This is always required
     tokens = (
@@ -132,6 +133,7 @@ class Lexer:
         else:
             raise ParseException("bad token at line " + str(tok.lineno))
 
+
 def main():
     file_path = "test.txt"
     with open(file_path) as f:
@@ -140,6 +142,7 @@ def main():
         while t != Token.EOF:
             print("=> " + t.getText())
             t = l.read()
+
 
 if __name__ == "__main__":
     # Build the lexer and try it out

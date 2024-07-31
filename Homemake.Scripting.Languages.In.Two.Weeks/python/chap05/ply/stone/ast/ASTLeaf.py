@@ -22,5 +22,3 @@ class ASTLeaf(ASTree):
     def token(self):
         return self._token
 
-    def __str__(self):
-        return self.toString()

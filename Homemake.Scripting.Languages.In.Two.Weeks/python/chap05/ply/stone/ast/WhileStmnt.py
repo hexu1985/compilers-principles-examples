@@ -11,5 +11,5 @@ class WhileStmnt(ASTList):
         return self.child(1)
 
     def toString(self):
-        return "(while " + str(self.condition()) + " " \
-                + str(self.body()) + ")"
+        return "(while " + self.condition().toString() + " " \
+                + self.body().toString() + ")"
