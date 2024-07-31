@@ -5,21 +5,8 @@ from . ast import PrimaryExpr, NumberLiteral, Name, StringLiteral, NegativeExpr,
 class BasicParser:
     def __init__(self):
         self.reserved = set()
-        self.reserved.add(";")
-        self.reserved.add("}")
-        self.reserved.add(Token.EOL)
-
         self.operators = Operators()
-        self.operators.add("=", 1, Operators.RIGHT);
-        self.operators.add("==", 2, Operators.LEFT);
-        self.operators.add(">", 2, Operators.LEFT);
-        self.operators.add("<", 2, Operators.LEFT);
-        self.operators.add("+", 3, Operators.LEFT);
-        self.operators.add("-", 3, Operators.LEFT);
-        self.operators.add("*", 4, Operators.LEFT);
-        self.operators.add("/", 4, Operators.LEFT);
-        self.operators.add("%", 4, Operators.LEFT);
-        
+
         self.expr0 = Parser.rule()
         self.primary = Parser.rule(PrimaryExpr).or_(
                 Parser.rule().sep("(").ast(self.expr0).sep(")"),
@@ -46,6 +33,19 @@ class BasicParser:
 
         self.program = Parser.rule().or_(self.statement, Parser.rule(NullStmnt)).sep(";", Token.EOL)
 
+        self.reserved.add(";")
+        self.reserved.add("}")
+        self.reserved.add(Token.EOL)
+        
+        self.operators.add("=", 1, Operators.RIGHT)
+        self.operators.add("==", 2, Operators.LEFT)
+        self.operators.add(">", 2, Operators.LEFT)
+        self.operators.add("<", 2, Operators.LEFT)
+        self.operators.add("+", 3, Operators.LEFT)
+        self.operators.add("-", 3, Operators.LEFT)
+        self.operators.add("*", 4, Operators.LEFT)
+        self.operators.add("/", 4, Operators.LEFT)
+        self.operators.add("%", 4, Operators.LEFT)
 
     def parse(self, lexer):
         return self.program.parse(lexer)

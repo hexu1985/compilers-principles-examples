@@ -42,16 +42,14 @@ class Factory:
         except AttributeError as e:
             pass
 
-        try:
-            class ConcreteFactory(Factory):
-                def __init__(self, clazz):
-                    self.clazz = clazz
+        class ConcreteFactory(Factory):
+            def __init__(self, clazz):
+                self.clazz = clazz
 
-                def make0(self, arg):
-                    return self.clazz(arg)
-            return ConcreteFactory(clazz)
-        except AttributeError as e:
-            raise RuntimeError(e)
+            def make0(self, arg):
+                return self.clazz(arg)
+        return ConcreteFactory(clazz)
+
 
 
 class Element:
@@ -242,15 +240,15 @@ class Expr(Element):
 
     def doShift(self, lexer, left, prec):
         lyst = list()
-        lyst.add(left)
-        lyst.add(ASTLeaf(lexer.read()))
+        lyst.append(left)
+        lyst.append(ASTLeaf(lexer.read()))
         right = self.factor.parse(lexer)
         next_ = self.nextOperator(lexer)
         while next_ != None and self.rightIsExpr(prec, next_):
             right = self.doShift(lexer, right, next_.value)
             next_ = self.nextOperator(lexer)
 
-        lyst.add(right)
+        lyst.append(right)
 
         return self.factory.make(lyst)
 
@@ -276,8 +274,6 @@ class Parser:
         self.elements = None
         self.factory = None
         self.reset(clazz)
-        if self.factory == None:
-            print("self.facotry is None")
         
     def clone(self):
         p = Parser(None)
@@ -302,10 +298,12 @@ class Parser:
     def rule(clazz=None):
         return Parser(clazz)
 
-    def reset(self, clazz=None):
+    def reset(self, *args ):
         self.elements = list()
-        if clazz != None:
-            self.factory = Factory.getForASTList(clazz)
+        if len(args) == 0:
+            return
+        clazz = args[0]
+        self.factory = Factory.getForASTList(clazz)
         return self
 
     def number(self, clazz=None):

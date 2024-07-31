@@ -1,5 +1,6 @@
 import ply.lex as lex
 from collections import deque 
+import warnings
 
 from stone.Token import Token
 from stone.ParseException import ParseException
@@ -48,10 +49,11 @@ class Lexer:
             'NUMBER',
             'STRING',
             'IDENTIFIER',
-            'COMMENT',
+            'comment',
+            'newline',
             )
 
-    def t_COMMENT(self, t):
+    def t_comment(self, t):
         r'//.*'
         pass
 
@@ -73,8 +75,9 @@ class Lexer:
 
     # Define a rule so we can track line numbers
     def t_newline(self,t):
-        r'\n+'
-        t.lexer.lineno += len(t.value)
+        r'\n'
+        t.lexer.lineno += 1
+        return t
 
     # A string containing ignored characters (spaces and tabs)
     t_ignore = ' \t'
@@ -124,6 +127,8 @@ class Lexer:
             self.queue.append(StrToken(tok.lineno, tok.value))
         elif tok.type == "IDENTIFIER":
             self.queue.append(IdToken(tok.lineno, tok.value))
+        elif tok.type == "newline":
+            self.queue.append(IdToken(tok.lineno, Token.EOL))
         else:
             raise ParseException("bad token at line " + str(tok.lineno))
 
