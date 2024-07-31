@@ -4,7 +4,7 @@ from . ast import PrimaryExpr, NumberLiteral, Name, StringLiteral, NegativeExpr,
 
 class BasicParser:
     def __init__(self):
-        self.reserved = set()
+        self.reserved = set()    
         self.operators = Operators()
 
         self.expr0 = Parser.rule()

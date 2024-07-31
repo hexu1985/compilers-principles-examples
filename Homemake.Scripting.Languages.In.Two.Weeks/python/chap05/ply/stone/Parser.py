@@ -10,7 +10,7 @@ class Factory:
         pass
 
     def make(self, arg):
-        self.make0(arg)
+        return self.make0(arg)
 
     @staticmethod
     def getForASTList(clazz):
@@ -270,10 +270,10 @@ class Expr(Element):
 
 
 class Parser:
-    def __init__(self, clazz):
+    def __init__(self, *args):
         self.elements = None
         self.factory = None
-        self.reset(clazz)
+        self.reset(*args)
         
     def clone(self):
         p = Parser(None)
@@ -301,7 +301,7 @@ class Parser:
     def reset(self, *args ):
         self.elements = list()
         if len(args) == 0:
-            return
+            return self
         clazz = args[0]
         self.factory = Factory.getForASTList(clazz)
         return self
@@ -376,7 +376,7 @@ class Parser:
             e.insert(p)
         else:
             otherwise = Parser(self)
-            self.reset()
+            self.reset(None)
             or_(p, otherwise)
         return self
 
