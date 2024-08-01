@@ -3,6 +3,7 @@ from . Token import Token
 from . ast import ASTree, ASTLeaf, ASTList
 from . ParseException import ParseException
 
+
 factoryName = "create"
 class Factory:
     @abc.abstractmethod
@@ -49,7 +50,6 @@ class Factory:
             def make0(self, arg):
                 return self.clazz(arg)
         return ConcreteFactory(clazz)
-
 
 
 class Element:
