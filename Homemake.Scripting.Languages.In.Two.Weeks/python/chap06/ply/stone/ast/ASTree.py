@@ -1,6 +1,12 @@
 import abc
 
-class ASTree:
+class ASTree(abc.ABC):
+    def __iter__(self):
+        return self.children()
+    
+    def __str__(self):
+        return self.toString()
+
     @abc.abstractmethod
     def child(self, i):
         pass
@@ -21,9 +27,7 @@ class ASTree:
     def toString(self):
         pass
 
-    def __iter__(self):
-        return self.children()
-    
-    def __str__(self):
-        return self.toString()
+    @abc.abstractmethod
+    def eval(self, env):
+        pass
 

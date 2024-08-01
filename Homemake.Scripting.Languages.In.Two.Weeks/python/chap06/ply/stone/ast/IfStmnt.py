@@ -16,3 +16,14 @@ class IfStmnt(ASTList):
     def toString(self):
         return "(if " + str(self.condition()) + " " + str(self.thenBlock()) \
                     + " else " + str(self.elseBlock()) + ")"
+
+    def eval(self, env):
+        c = self.condition().eval(env)
+        if isinstance(c, int) and c:
+            return self.thenBlock().eval(env)
+        else:
+            b = self.elseBlock()
+            if b == None:
+                return 0
+            else:
+                return b.eval(env)

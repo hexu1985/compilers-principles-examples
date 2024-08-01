@@ -1,5 +1,6 @@
 import io
 from . ASTree import ASTree
+from stone.StoneException import StoneException
 
 class ASTList(ASTree):
     def __init__(self, lyst):
@@ -31,3 +32,6 @@ class ASTList(ASTree):
             if s:
                 return s
         return None
+
+    def eval(self, env):
+        raise StoneException("cannot eval: " + str(self), self)

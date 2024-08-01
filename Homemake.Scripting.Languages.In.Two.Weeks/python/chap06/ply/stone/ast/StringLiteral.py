@@ -6,3 +6,6 @@ class StringLiteral(ASTLeaf):
 
     def value(self):
         return self.token().getText()
+
+    def eval(self, env):
+        return self.value()

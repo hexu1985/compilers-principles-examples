@@ -6,3 +6,6 @@ class NumberLiteral(ASTLeaf):
 
     def value(self):
         return self.token().getNumber()
+
+    def eval(self, env):
+        return self.value()

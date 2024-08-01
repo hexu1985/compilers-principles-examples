@@ -12,3 +12,12 @@ class WhileStmnt(ASTList):
 
     def toString(self):
         return "(while " + str(self.condition()) + " " + str(self.body()) + ")"
+
+    def eval(self, env):
+        result = 0
+        while True:
+            c = self.condition().eval(env)
+            if isinstance(c, int) and c:
+                return result
+            else:
+                result = self.body().eval(env)

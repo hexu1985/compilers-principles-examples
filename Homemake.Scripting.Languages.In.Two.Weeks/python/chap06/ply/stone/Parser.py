@@ -5,7 +5,7 @@ from . ParseException import ParseException
 
 
 factoryName = "create"
-class Factory:
+class Factory(abc.ABC):
     @abc.abstractmethod
     def make0(self, arg):
         pass

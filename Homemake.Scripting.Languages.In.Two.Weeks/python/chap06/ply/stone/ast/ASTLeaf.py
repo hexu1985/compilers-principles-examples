@@ -1,4 +1,5 @@
 from . ASTree import ASTree
+from stone.StoneException import StoneException
 
 class ASTLeaf(ASTree):
     def __init__(self, t):
@@ -21,4 +22,7 @@ class ASTLeaf(ASTree):
 
     def token(self):
         return self._token
+
+    def eval(self, env):
+        raise StoneException("cannot eval: " + str(self), self)
 

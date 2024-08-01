@@ -1,6 +1,6 @@
 import abc
 
-class ASTree:
+class ASTree(abc.ABC):
     def __iter__(self):
         return self.children()
     

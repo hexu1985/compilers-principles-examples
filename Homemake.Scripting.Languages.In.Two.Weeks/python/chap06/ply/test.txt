@@ -1,12 +1,7 @@
-even = 0
-odd = 0
+sum = 0
 i = 1
 while i < 10 {
-    if i % 2 == 0 {     //evennumber?
-        even = even + i
-    } else {
-        odd = odd + i
-    }
+    sum = sum + i
     i = i + 1
 }
-even + odd
+sum
