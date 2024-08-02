@@ -17,7 +17,7 @@ class WhileStmnt(ASTList):
         result = 0
         while True:
             c = self.condition().eval(env)
-            if isinstance(c, int) and c:
+            if isinstance(c, int) and not c:
                 return result
             else:
                 result = self.body().eval(env)

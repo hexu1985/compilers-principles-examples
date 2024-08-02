@@ -19,7 +19,7 @@ class BinaryExpr(ASTList):
         op = self.operator()
         if op == "=":
             right = self.right().eval(env)
-            self.computeAssign(env, right)
+            return self.computeAssign(env, right)
         else:
             left = self.left().eval(env)
             right = self.right().eval(env)
@@ -35,7 +35,7 @@ class BinaryExpr(ASTList):
 
     def computeOp(self, left, op, right):
         if isinstance(left, int) and isinstance(right, int):
-            self.computeNumber(left, op, right)
+            return self.computeNumber(left, op, right)
         else:
             if op == "+":
                 return str(left) + str(right)
