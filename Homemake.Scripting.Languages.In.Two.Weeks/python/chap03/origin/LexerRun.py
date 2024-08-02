@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
+
 import sys
-from stone.Lexer import Lexer
-from stone.Token import Token
+from stone import Lexer, Token
 
 def main():
     file_path = "test.txt"

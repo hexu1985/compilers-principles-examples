@@ -1,4 +1,4 @@
-from stone.StoneException import StoneException
+from . StoneException import StoneException
 
 class Token:
     EOF = None  # end of file

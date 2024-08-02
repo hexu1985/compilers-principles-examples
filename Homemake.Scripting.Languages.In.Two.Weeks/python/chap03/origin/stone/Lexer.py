@@ -6,8 +6,7 @@ from stone.ParseException import ParseException
 from stone.Token import Token
 
 class Lexer:
-    regexPat = r'\s*((//.*)|([0-9]+)|("(\\"|\\\\|\\n|[^"])*")' \
-                '|[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\|\||[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~])?'
+    regexPat = r'\s*((//.*)|([0-9]+)|("(\\"|\\\\|\\n|[^"])*")|[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\|\||[!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~])?'
 
     def __init__(self, r):  # r file
         self.pattern = re.compile(Lexer.regexPat)
