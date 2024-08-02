@@ -69,7 +69,7 @@ class Lexer:
         return t
 
     def t_IDENTIFIER(self, t):
-        r'[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\|\||[!"#$%&\'()*+,-./:;<=>?@[\\\]^_`{|}~]'
+        r'[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\|\||[!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~]'
         return t
 
     # Define a rule so we can track line numbers
