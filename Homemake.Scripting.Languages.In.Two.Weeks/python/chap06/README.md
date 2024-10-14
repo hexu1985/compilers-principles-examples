@@ -6,7 +6,7 @@ statement  : "if" expr block [ "else" block ]
 　　　　　　 | "while" expr block
 　　　　　　 | simple
 simple     : expr
-block　　　: "{" [ statement ] {(";" | EOL) [ statement ]} "}"
+block　　　: "{" [ statement ] { (";" | EOL) [ statement ] } "}"
 expr　　　 : factor { OP factor }
 factor　　 : "-" primary | primary
 primary　　: "(" expr ")" | NUMBER | IDENTIFIER | STRING
