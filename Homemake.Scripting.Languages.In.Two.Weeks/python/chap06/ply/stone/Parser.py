@@ -377,7 +377,7 @@ class Parser:
         else:
             otherwise = Parser(self)
             self.reset(None)
-            or_(p, otherwise)
+            self.or_(p, otherwise)
         return self
 
 
