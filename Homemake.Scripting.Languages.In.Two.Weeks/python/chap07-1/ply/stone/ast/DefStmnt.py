@@ -1,4 +1,5 @@
 from . ASTList import ASTList
+from stone.Function import Function
 
 class DefStmnt(ASTList):
     def __init__(self, c):
@@ -15,3 +16,7 @@ class DefStmnt(ASTList):
 
     def toString(self):
         return "(def" + str(self.name()) + " " + str(self.parameters()) + " " + str(self.body()) + ")"
+
+    def eval(self, env):
+        env.putNew(self.name(), Function(self.parameters(), self.body(), env))
+        return self.name()
