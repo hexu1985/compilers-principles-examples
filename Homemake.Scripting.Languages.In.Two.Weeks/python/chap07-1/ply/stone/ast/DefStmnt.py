@@ -3,10 +3,10 @@ from stone.Function import Function
 
 class DefStmnt(ASTList):
     def __init__(self, c):
-        super().__init__()
+        super().__init__(c)
 
     def name(self):
-        return self.child(i).token().getText()
+        return self.child(0).token().getText()
 
     def parameters(self):
         return self.child(1)

@@ -95,7 +95,7 @@ class OrTree(Element):
         return None
 
     def insert(self, p):
-        self.parsers = [p] + self.parsers
+        self.parsers = [p] + list(self.parsers)
         if p.factory == None:
             print("p.factory is None")
 
@@ -279,6 +279,7 @@ class Parser:
         p = Parser(None)
         p.elements = self.elements
         p.factory = self.factory
+        return p
     
     def parse(self, lexer):
         results = list()
@@ -298,7 +299,7 @@ class Parser:
     def rule(clazz=None):
         return Parser(clazz)
 
-    def reset(self, *args ):
+    def reset(self, *args):
         self.elements = list()
         if len(args) == 0:
             return self

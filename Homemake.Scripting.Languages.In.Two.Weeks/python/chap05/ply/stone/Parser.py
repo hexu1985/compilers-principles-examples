@@ -279,6 +279,7 @@ class Parser:
         p = Parser(None)
         p.elements = self.elements
         p.factory = self.factory
+        return p
     
     def parse(self, lexer):
         results = list()
@@ -298,7 +299,7 @@ class Parser:
     def rule(clazz=None):
         return Parser(clazz)
 
-    def reset(self, *args ):
+    def reset(self, *args):
         self.elements = list()
         if len(args) == 0:
             return self
