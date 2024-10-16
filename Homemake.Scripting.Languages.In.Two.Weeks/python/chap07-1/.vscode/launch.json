@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "cwd": "${workspaceFolder}/origin",
+            "cwd": "${workspaceFolder}/ply",
             "console": "integratedTerminal"
         }
     ]
