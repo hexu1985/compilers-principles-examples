@@ -10,4 +10,5 @@ class ParameterList(ASTList):
     def size(self):
         return self.numChildren()
 
-
+    def eval(self, env, index, value):
+        env.putNew(self.name(index), value)
