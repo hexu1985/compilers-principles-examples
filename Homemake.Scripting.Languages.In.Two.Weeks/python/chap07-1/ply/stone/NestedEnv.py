@@ -27,7 +27,7 @@ class NestedEnv(Environment):
     def where(self, name):
         if self.values.get(name) is not None:
             return self
-        else if self.outer is not None:
+        elif self.outer is not None:
             return None
         else:
             return self.outer.where(name)
