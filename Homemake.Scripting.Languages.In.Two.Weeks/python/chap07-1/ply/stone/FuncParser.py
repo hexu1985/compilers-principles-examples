@@ -9,7 +9,7 @@ class FuncParser(BasicParser):
         self.param = Parser.rule().identifier(self.reserved)
         self.params = Parser.rule(ParameterList).ast(self.param).repeat(Parser.rule().sep(",").ast(self.param))
         self.paramList = Parser.rule().sep("(").maybe(self.params).sep(")")
-        self.def_ = Parser.rule(DefStmnt).ast(self.expr).repeat(Parser.rule().sep(",").ast(self.expr))
+        self.def_ = Parser.rule(DefStmnt).sep("def").identifier(self.reserved).ast(self.paramList).ast(self.block)
         self.args = Parser.rule(Arguments).ast(self.expr).repeat(Parser.rule().sep(",").ast(self.expr))
         self.postfix = Parser.rule().sep("(").maybe(self.args).sep(")")
 

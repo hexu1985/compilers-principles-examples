@@ -15,7 +15,7 @@ class DefStmnt(ASTList):
         return self.child(2)
 
     def toString(self):
-        return "(def" + str(self.name()) + " " + str(self.parameters()) + " " + str(self.body()) + ")"
+        return "(def " + str(self.name()) + " " + str(self.parameters()) + " " + str(self.body()) + ")"
 
     def eval(self, env):
         env.putNew(self.name(), Function(self.parameters(), self.body(), env))

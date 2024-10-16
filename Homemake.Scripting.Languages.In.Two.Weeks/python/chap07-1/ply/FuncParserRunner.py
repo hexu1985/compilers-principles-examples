@@ -2,7 +2,7 @@ import sys
 from stone import Lexer, Token, FuncParser
 
 def main():
-    file_path = "test.txt"
+    file_path = "test_func1.txt"
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
 
