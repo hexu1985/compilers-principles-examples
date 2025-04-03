@@ -4,6 +4,8 @@ from stone.Token import Token
 
 def on_ok():
     """OK 按钮的回调函数：获取输入内容并显示，然后关闭窗口"""
+    print()
+    print('-'*50)
     user_input = text_input.get("1.0", tk.END).strip()  # 获取全部文本
     l = Lexer(user_input)
     t = l.read()
