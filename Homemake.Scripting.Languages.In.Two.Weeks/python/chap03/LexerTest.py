@@ -1,4 +1,3 @@
-import sys
 from stone.Lexer import Lexer
 from stone.Token import Token
 
