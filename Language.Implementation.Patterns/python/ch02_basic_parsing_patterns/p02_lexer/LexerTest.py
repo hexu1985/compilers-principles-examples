@@ -2,7 +2,7 @@ from Token import Token
 from Lexer import Lexer
 from ListLexer import ListLexer
 
-def test():
+def test_lexer():
     input = "[a, b ]"
     lexer = ListLexer(input)
 
@@ -28,4 +28,4 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
+    test_lexer()
