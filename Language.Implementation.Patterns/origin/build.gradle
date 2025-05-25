@@ -1,0 +1,32 @@
+
+plugins {
+    id 'idea'
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'antlr'
+
+repositories {
+    jcenter()
+}
+
+test {
+    useJUnitPlatform()
+    workingDir = '.'
+}
+
+dependencies {
+    // Use JUnit test framework
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.5.1")
+    testCompile("org.hamcrest:hamcrest-all:1.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
+
+    // ANTLR
+    antlr "org.antlr:antlr:3.5.2" // use ANTLR version 3
+    compile 'org.antlr:antlr-runtime:3.5.2'
+    testCompile 'org.antlr:antlr-runtime:3.5.2'
+}
+
+
+
