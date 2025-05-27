@@ -7,7 +7,7 @@
 
 class LexerError: public std::logic_error {
 public:
-    LexerError(const std::string& what_arg): logic_error(what_arg) {}
+    LexerError(const std::string& what_arg): std::logic_error(what_arg) {}
 };
 
 class Lexer {

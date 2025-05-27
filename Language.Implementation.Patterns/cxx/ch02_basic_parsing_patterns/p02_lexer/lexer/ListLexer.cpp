@@ -10,7 +10,7 @@ Token ListLexer::nextToken() {
         case ']': consume(); return Token(Token::RBRACK, "]"); 
         default:
             if (isLETTER()) return NAME();
-            throw LexerError(std::string("invalid character: " + c));
+            throw LexerError(std::string("invalid character: ") + c);
         }
     }
     return Token(Token::EOF_TYPE, "<EOF>");
