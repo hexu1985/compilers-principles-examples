@@ -1,6 +1,7 @@
 import io
 from Token import Token
 from Lexer import Lexer
+from Lexer import LexerError
 
 class ListLexer(Lexer):
     def __init__(self, input):
