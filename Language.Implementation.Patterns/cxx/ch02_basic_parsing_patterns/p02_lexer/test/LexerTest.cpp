@@ -12,16 +12,16 @@ TEST(Lexer, nextToken)
 
     ListLexer lexer{input};
     std::vector<Token> expectedResult;
-    expectedResult.push_back(Token{Token::LBRACK, "["});
-    expectedResult.push_back(Token{Token::NAME, "a"});
-    expectedResult.push_back(Token{Token::COMMA, ","});
-    expectedResult.push_back(Token{Token::NAME, "b"});
-    expectedResult.push_back(Token{Token::RBRACK, "]"});
+    expectedResult.push_back(Token{ListLexer::T_TYPE_LBRACK, "["});
+    expectedResult.push_back(Token{ListLexer::T_TYPE_NAME, "a"});
+    expectedResult.push_back(Token{ListLexer::T_TYPE_COMMA, ","});
+    expectedResult.push_back(Token{ListLexer::T_TYPE_NAME, "b"});
+    expectedResult.push_back(Token{ListLexer::T_TYPE_RBRACK, "]"});
 
     std::vector<Token> actualResult;
 
     Token t = lexer.nextToken();
-    while (t.type != Token::EOF_TYPE) {
+    while (t.type != ListLexer::T_TYPE_EOF) {
         actualResult.push_back(t);
         t = lexer.nextToken();
     }

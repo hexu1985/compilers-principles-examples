@@ -1,14 +1,8 @@
 #include "Token.hpp"
-#include <iostream>
+#include "Lexer.hpp"
 
-const std::vector<std::string> Token::tokenNames = {"n/a", "<EOF>", "NAME", "COMMA", "LBRACK", "RBRACK"};
-
-std::string Token::toString() const {
-    const std::string& tname = tokenNames[type];
+std::string Token::toString(const Lexer& lexer) const {
+    std::string tname = lexer.getTokenName(type);
     return "<'" + text + "'," + tname;
 }
 
-std::ostream& operator<<(std::ostream& os, const Token& t) {
-    os << t.toString();
-    return os;
-}

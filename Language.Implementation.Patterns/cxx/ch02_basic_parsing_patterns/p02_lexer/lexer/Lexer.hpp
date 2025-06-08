@@ -23,6 +23,7 @@ public:
     void match(char x);
 
     virtual Token nextToken() = 0;
+    virtual std::string getTokenName(int tokenType) const = 0;
 
 private:
     std::string input;
