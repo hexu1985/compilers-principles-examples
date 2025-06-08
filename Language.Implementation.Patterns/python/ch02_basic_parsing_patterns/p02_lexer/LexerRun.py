@@ -12,7 +12,7 @@ def main():
     with open(file_path) as f:
         lexer = ListLexer(f.read())
         t = lexer.nextToken()
-        while t.type != Token.EOF_TYPE:
+        while t.type != ListLexer.T_TYPE_EOF:
             print("=> {}".format(t))
             t = lexer.nextToken()
 

@@ -7,16 +7,16 @@ def test_lexer():
     lexer = ListLexer(input)
 
     expectedResult = []
-    expectedResult.append(Token(Token.LBRACK, "["))
-    expectedResult.append(Token(Token.NAME, "a"))
-    expectedResult.append(Token(Token.COMMA, ","))
-    expectedResult.append(Token(Token.NAME, "b"))
-    expectedResult.append(Token(Token.RBRACK, "]"))
+    expectedResult.append(Token(ListLexer.T_TYPE_LBRACK, "["))
+    expectedResult.append(Token(ListLexer.T_TYPE_NAME, "a"))
+    expectedResult.append(Token(ListLexer.T_TYPE_COMMA, ","))
+    expectedResult.append(Token(ListLexer.T_TYPE_NAME, "b"))
+    expectedResult.append(Token(ListLexer.T_TYPE_RBRACK, "]"))
 
     actualResult = []
 
     t = lexer.nextToken()
-    while t.type != Token.EOF_TYPE:
+    while t.type != ListLexer.T_TYPE_EOF:
         actualResult.append(t)
         t = lexer.nextToken()
 

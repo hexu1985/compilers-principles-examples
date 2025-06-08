@@ -4,7 +4,7 @@ class LexerError(Exception):
     pass
 
 class Lexer(ABC):
-    EOF = -1
+    EOF = chr(255)
 
     def __init__(self, input):
         self.input = input
