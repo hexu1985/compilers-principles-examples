@@ -4,7 +4,7 @@ Lexer::~Lexer() {}
 
 void Lexer::consume() {
     p++;
-    if (p >= input.length()) c = EOF_CHAR;
+    if (p >= input.length()) c = EOF;
     else c = input.at(p);
 }
 

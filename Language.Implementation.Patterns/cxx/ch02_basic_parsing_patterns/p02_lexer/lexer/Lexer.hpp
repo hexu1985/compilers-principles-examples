@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdio>
 #include <string>
 #include <stdexcept>
 
@@ -12,7 +13,11 @@ public:
 
 class Lexer {
 public:
-    static const char EOF_CHAR = -1;
+
+#ifndef EOF
+    static constexpr char EOF = -1;
+#endif
+    static constexpr int EOF_TYPE = 1;
 
     Lexer(const std::string& input_): input(input_) {
         c = input.at(p);

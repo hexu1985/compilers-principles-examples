@@ -8,27 +8,27 @@ std::string ListLexer::getTokenName(int tokenType) const {
 }
 
 Token ListLexer::nextToken() {
-    while (c != EOF_CHAR) {
+    while (c != EOF) {
         switch (c) {
         case ' ': case '\t': case '\n': case '\r': WS(); continue;
-        case ',': consume(); return Token(T_TYPE_COMMA, ","); 
-        case '[': consume(); return Token(T_TYPE_LBRACK, "["); 
-        case ']': consume(); return Token(T_TYPE_RBRACK, "]"); 
+        case ',': consume(); return Token(COMMA, ","); 
+        case '[': consume(); return Token(LBRACK, "["); 
+        case ']': consume(); return Token(RBRACK, "]"); 
         default:
-            if (isLETTER()) return NAME();
+            if (isLETTER()) return NAME_();
             throw LexerError(std::string("invalid character: ") + c);
         }
     }
-    return Token(T_TYPE_EOF, "<EOF>");
+    return Token(EOF_TYPE, "<EOF>");
 }
 
-Token ListLexer::NAME() {
+Token ListLexer::NAME_() {
     std::stringstream buf;
     do {
         buf << c;
         consume();
     } while (isLETTER());
-    return Token(T_TYPE_NAME, buf.str());
+    return Token(NAME, buf.str());
 }
 
 void ListLexer::WS() {

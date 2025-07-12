@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 
     ListLexer lexer{buf.str()};
     auto t = lexer.nextToken();
-    while (t.type != ListLexer::T_TYPE_EOF) {
+    while (t.type != Lexer::EOF_TYPE) {
         std::cout << "=> " << t.toString(lexer) << "\n";
         t = lexer.nextToken();
     }

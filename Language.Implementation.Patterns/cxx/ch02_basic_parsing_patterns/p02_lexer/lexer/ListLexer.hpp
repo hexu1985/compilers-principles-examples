@@ -5,13 +5,10 @@
 
 class ListLexer: public Lexer {
 public:
-    enum {
-        T_TYPE_EOF = 1,
-        T_TYPE_NAME = 2,
-        T_TYPE_COMMA = 3,
-        T_TYPE_LBRACK = 4,
-        T_TYPE_RBRACK = 5,
-    };
+    static constexpr int NAME = 2;
+    static constexpr int COMMA = 3;
+    static constexpr int LBRACK = 4;
+    static constexpr int RBRACK = 5;
 
     const static std::vector<std::string> tokenNames;
 
@@ -19,7 +16,7 @@ public:
 
     Token nextToken();
 
-    Token NAME();
+    Token NAME_();
 
     void WS();
 
