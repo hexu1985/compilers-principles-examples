@@ -6,7 +6,7 @@ Parser::Parser(Lexer* input_): input(input_) {
 	
 /** if lookahead token type matches x, consume & return else error */
 void Parser::match(int x) {
-    if ( lookahead.type == x) consume();
+    if ( lookahead.type == x ) consume();
     else throw ParserError("expecting " + input->getTokenName(x) +
             "; found " + lookahead.toString(*input));
 }
