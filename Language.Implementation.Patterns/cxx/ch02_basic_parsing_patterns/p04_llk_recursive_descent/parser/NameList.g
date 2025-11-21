@@ -1,3 +1,6 @@
-list     : '[' elements ']';  // Match bracketed list
-elements : element (',' element)*; // Match comma separated list
-element  : NAME | list; // element is NAME or nested list
+list     : '[' elements ']' ; // match bracketed list
+elements : element (',' element)* ; // match comma-separated list
+element  : NAME '=' NAME // match assignment such as a=b
+         | NAME
+         | list
+         ;
