@@ -27,6 +27,6 @@ void LookaheadParser::element() {
         match(LookaheadLexer::EQUALS);
         match(LookaheadLexer::NAME);
     } else if ( LA(1) == LookaheadLexer::NAME ) match(LookaheadLexer::NAME);
-    else if ( lookahead.type == LookaheadLexer::LBRACK ) list();
-    else throw ParserError("expecting name or list; found " + lookahead.toString(*input));
+    else if ( LA(1) == LookaheadLexer::LBRACK ) list();
+    else throw ParserError("expecting name or list; found " + LT(1).toString(*input));
 }

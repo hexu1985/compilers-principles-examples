@@ -9,7 +9,7 @@ Parser::Parser(Lexer* input_, int k_): input(input_), k(k_) {
 	
 void Parser::consume() {
     lookahead[p] = input->nextToken();
-    p = (p + 1) % p;
+    p = (p + 1) % k;
 }
 
 Token Parser::LT(int i) {
