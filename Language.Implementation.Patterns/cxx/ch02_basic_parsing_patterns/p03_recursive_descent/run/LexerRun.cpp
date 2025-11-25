@@ -5,23 +5,16 @@
 
 #include "Token.hpp"
 #include "ListLexer.hpp"
+#include "read_file.hpp"
 
 int main(int argc, char* argv[]) {
-    std::string file_path = "test.txt";
+    const char* file_path = "test.txt";
 
     if (argc == 2) {
         file_path = argv[1];
     }
 
-    std::ifstream ifile{file_path};
-    if (!ifile) {
-        std::cerr << "open file \"" << file_path << "\" failed\n";
-        return 1;
-    }
-    std::stringstream buf;
-    buf << ifile.rdbuf();
-
-    ListLexer lexer{buf.str()};
+    ListLexer lexer{read_file(file_path)};
     auto t = lexer.nextToken();
     while (t.type != Lexer::EOF_TYPE) {
         std::cout << "=> " << t.toString(lexer) << "\n";
