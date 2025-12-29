@@ -1,4 +1,5 @@
 #include "Parser.hpp"
+#include "RecognitionException.hpp"
 #include <cassert>
 
 Parser::Parser(Lexer* input_): input(input_) { 
