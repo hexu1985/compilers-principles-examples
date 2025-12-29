@@ -3,7 +3,7 @@
 #include "Token.hpp"
 #include "Lexer.hpp"
 
-class LookaheadLexer: public Lexer {
+class BacktrackLexer: public Lexer {
 public:
     static constexpr int NAME = 2;
     static constexpr int COMMA = 3;
@@ -13,7 +13,7 @@ public:
 
     const static std::vector<std::string> tokenNames;
 
-    LookaheadLexer(const std::string& input): Lexer(input) {}
+    BacktrackLexer(const std::string& input): Lexer(input) {}
 
     Token nextToken();
 

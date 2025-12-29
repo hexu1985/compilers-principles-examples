@@ -1,13 +1,13 @@
-#include "LookaheadLexer.hpp"
+#include "BacktrackLexer.hpp"
 #include <sstream>
 
-const std::vector<std::string> LookaheadLexer::tokenNames = {"n/a", "<EOF>", "NAME", "COMMA", "LBRACK", "RBRACK", "EQUALS"};
+const std::vector<std::string> BacktrackLexer::tokenNames = {"n/a", "<EOF>", "NAME", "COMMA", "LBRACK", "RBRACK", "EQUALS"};
 
-std::string LookaheadLexer::getTokenName(int tokenType) const {
+std::string BacktrackLexer::getTokenName(int tokenType) const {
     return tokenNames.at(tokenType);
 }
 
-Token LookaheadLexer::nextToken() {
+Token BacktrackLexer::nextToken() {
     while (c != EOF) {
         switch (c) {
         case ' ': case '\t': case '\n': case '\r': WS(); continue;
@@ -23,7 +23,7 @@ Token LookaheadLexer::nextToken() {
     return Token(EOF_TYPE, "<EOF>");
 }
 
-Token LookaheadLexer::NAME_() {
+Token BacktrackLexer::NAME_() {
     std::stringstream buf;
     do {
         buf << c;
@@ -32,7 +32,7 @@ Token LookaheadLexer::NAME_() {
     return Token(NAME, buf.str());
 }
 
-void LookaheadLexer::WS() {
+void BacktrackLexer::WS() {
     while (c == ' ' || c == '\t' || c == '\n' || c == '\r')
         consume();
 }
