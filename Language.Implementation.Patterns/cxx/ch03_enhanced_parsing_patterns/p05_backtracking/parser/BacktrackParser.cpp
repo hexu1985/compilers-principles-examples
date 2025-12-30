@@ -1,6 +1,7 @@
 #include "BacktrackParser.hpp"
 #include "RecognitionException.hpp"
 #include "NoViableAltException.hpp"
+#include "MismatchedTokenException.hpp"
 
 BacktrackParser::BacktrackParser(Lexer* input): Parser(input) {
 }
@@ -43,7 +44,7 @@ bool BacktrackParser::speculate_stat_alt2() {
         assign();
         match(Lexer::EOF_TYPE);
     }
-    catch (RecognitionException e) {
+    catch (const RecognitionException& e) {
         success = false;
     }
 
@@ -51,4 +52,35 @@ bool BacktrackParser::speculate_stat_alt2() {
     return success;
 }
 
+/** assign : list '=' list ; // parallel assignment */
+void BacktrackParser::assign() {
+    list();
+    match(BacktrackLexer::EQUALS);
+    list();
+}
+
+void BacktrackParser::list() {
+    match(BacktrackLexer::LBRACK);
+    elements();
+    match(BacktrackLexer::RBRACK);
+}
+
+void BacktrackParser::elements() {
+    element();
+    while (LA(1) == BacktrackLexer::COMMA) {
+        match(BacktrackLexer::COMMA);
+        element();
+    }
+}
+
+void BacktrackParser::element() {
+    if (LA(1) == BacktrackLexer::NAME && LA(2) == BacktrackLexer::EQUALS) {
+        match(BacktrackLexer::NAME);
+        match(BacktrackLexer::EQUALS);
+        match(BacktrackLexer::NAME);
+    }
+    else if (LA(1) == BacktrackLexer::NAME) match(BacktrackLexer::NAME);
+    else if (LA(1) == BacktrackLexer::LBRACK) list();
+    else throw NoViableAltException("expecting element found " + LT(1).toString(*input));
+}
 

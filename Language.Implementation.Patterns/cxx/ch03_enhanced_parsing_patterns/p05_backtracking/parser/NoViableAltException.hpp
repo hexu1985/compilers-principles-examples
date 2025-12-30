@@ -4,5 +4,5 @@
 
 class NoViableAltException: public RecognitionException {
 public:
-    NoViableAltException(const std::string& what_arg): RecognitionError(what_arg) {}
+    NoViableAltException(const std::string& what_arg): RecognitionException(what_arg) {}
 };

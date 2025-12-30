@@ -1,7 +1,9 @@
 #pragma once
 
-class RecognitionError: public std::logic_error {
+#include <stdexcept>
+
+class RecognitionException: public std::logic_error {
 public:
-    RecognitionError(const std::string& what_arg): std::logic_error(what_arg) {}
+    RecognitionException(const std::string& what_arg): std::logic_error(what_arg) {}
 };
 

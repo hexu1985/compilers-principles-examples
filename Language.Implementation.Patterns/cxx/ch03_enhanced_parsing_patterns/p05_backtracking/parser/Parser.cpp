@@ -1,5 +1,6 @@
 #include "Parser.hpp"
 #include "RecognitionException.hpp"
+#include "MismatchedTokenException.hpp"
 #include <cassert>
 
 Parser::Parser(Lexer* input_): input(input_) { 
