@@ -15,16 +15,18 @@ public:
 
     BacktrackLexer(const std::string& input): Lexer(input) {}
 
-    Token nextToken();
+    Token nextToken() override;
 
-    Token NAME_();
+    Token name();
 
-    void WS();
+    void LETTER();
+
+    void WS() override;
 
     std::string getTokenName(int tokenType) const override;
 
 private:
     bool isLETTER() {
-        return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
+        return (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z');
     }
 };

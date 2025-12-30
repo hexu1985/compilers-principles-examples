@@ -25,6 +25,7 @@ public:
 
     virtual ~Lexer();
     void consume(); 
+    void advance();
     void match(char x);
 
     virtual Token nextToken() = 0;
