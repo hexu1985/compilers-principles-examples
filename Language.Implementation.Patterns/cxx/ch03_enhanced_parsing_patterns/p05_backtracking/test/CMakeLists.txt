@@ -11,5 +11,5 @@ message( STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}" )
 
 find_package(GTest REQUIRED)
 
-add_executable( LookaheadParserTest LookaheadParserTest.cpp )
-target_link_libraries( LookaheadParserTest parser lexer GTest::gtest_main)
+add_executable( BacktrackingParserTest BacktrackingParserTest.cpp )
+target_link_libraries( BacktrackingParserTest parser lexer GTest::gtest_main)
