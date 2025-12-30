@@ -15,7 +15,7 @@ public:
 
     BacktrackLexer(const std::string& input): Lexer(input) {}
 
-    Token nextToken();
+    Token nextToken() override;
 
     Token NAME_();
 
