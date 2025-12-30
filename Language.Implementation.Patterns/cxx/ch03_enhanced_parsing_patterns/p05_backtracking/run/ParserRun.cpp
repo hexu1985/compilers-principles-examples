@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "Token.hpp"
-#include "LookaheadLexer.hpp"
-#include "LookaheadParser.hpp"
+#include "BacktrackLexer.hpp"
+#include "BacktrackParser.hpp"
 #include "read_file.hpp"
 
 int main(int argc, char* argv[]) {
@@ -15,9 +15,9 @@ int main(int argc, char* argv[]) {
         file_path = argv[1];
     }
 
-    LookaheadLexer* lexer = new LookaheadLexer(read_file(file_path));
-    LookaheadParser parser{lexer, 2};
-    parser.list();
+    BacktrackLexer* lexer = new BacktrackLexer(read_file(file_path));
+    BacktrackParser parser{lexer};
+    parser.stat();
 
     return 0;
 }
