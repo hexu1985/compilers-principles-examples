@@ -12,8 +12,7 @@ TEST(RecursiveDescentTest, testOk)
     LookaheadLexer* lexer = new LookaheadLexer("[a,b=c,[d,e]]");
     LookaheadParser parser(lexer, 2);
 
-    // no throw
-    parser.list();
+    EXPECT_NO_THROW(parser.list());
 }
 
 TEST(RecursiveDescentTest, testFail)

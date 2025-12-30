@@ -12,8 +12,7 @@ TEST(RecursiveDescentTest, testOk)
     ListLexer* lexer = new ListLexer("[a,b]");
     ListParser parser{lexer};
 
-    // no throw
-    parser.list();
+    EXPECT_NO_THROW(parser.list());
 }
 
 TEST(RecursiveDescentTest, testFail)
