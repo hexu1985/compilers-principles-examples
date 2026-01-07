@@ -14,9 +14,7 @@ file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
 add_library(parser 
     OBJECT 
-    #${SOURCES}
-    #${HEADERS}
-    Parser.cpp
-    Parser.hpp
+    ${SOURCES}
+    ${HEADERS}
     )
 target_include_directories(parser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..)
