@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Token.hpp"
 #include "Lexer.hpp"
 
 #include <string>
@@ -27,7 +26,7 @@ public:
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
-    Token* nextToken() override {
+    std::unique_ptr<Token> nextToken() override {
         while (c != EOF) {
             switch (c) {
                 case ' ':
@@ -38,30 +37,30 @@ public:
                     continue;
                 case ',':
                     consume();
-                    return new Token(COMMA, ",");
+                    return std::make_unique<Token>(COMMA, ",");
                 case '[':
                     consume();
-                    return new Token(LBRACK, "[");
+                    return std::make_unique<Token>(LBRACK, "[");
                 case ']':
                     consume();
-                    return new Token(RBRACK, "]");
+                    return std::make_unique<Token>(RBRACK, "]");
                 default:
                     if (isLETTER())
                         return NAME_();
                     throw std::runtime_error(std::string("invalid character: ") + static_cast<char>(c));
             }
         }
-        return new Token(EOF_TYPE, "<EOF>");
+        return std::make_unique<Token>(EOF_TYPE, "<EOF>");
     }
 
-    /** NAME : LETTER+ ; // NAME is sequence of >=1 letter */
-    Token* NAME_() {
+    /** NAME : ('a'..'z'|'A'..'Z')+; // NAME is sequence of >=1 letter */
+    std::unique_ptr<Token> NAME_() {
         std::string buf;
         do {
             buf.push_back(static_cast<char>(c));
             LETTER();
         } while (isLETTER());
-        return new Token(NAME, buf);
+        return std::make_unique<Token>(NAME, buf);
     }
 
     /** LETTER   : 'a'..'z'|'A'..'Z'; // define what a letter is (\w) */

@@ -1,9 +1,10 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <stdexcept>
 
-class Token;
+#include "Token.hpp"
 
 class Lexer {
 public:
@@ -52,6 +53,6 @@ public:
         }
     }
 
-    virtual Token* nextToken() = 0;
+    virtual std::unique_ptr<Token> nextToken() = 0;
     virtual std::string getTokenName(int tokenType) = 0;
 };
