@@ -1,20 +1,10 @@
-#include <iostream>
-#include <string>
 #include "ListLexer.hpp"
+#include "ListParser.hpp"
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <input_string>" << std::endl;
-        return 1;
-    }
-
-    ListLexer lexer(argv[1]);
-    auto t = lexer.nextToken();
-    while (t->type != Lexer::EOF_TYPE) {
-        std::cout << t->toString() << std::endl;
-        t = lexer.nextToken();
-    }
-    std::cout << t->toString() << std::endl;    //EOF
+    auto lexer = std::make_unique<ListLexer>(argv[1]);  // parse command-line arg
+    ListParser parser(std::move(lexer));
+    parser.list();  // begin parsing at rule list
 
     return 0;
 }

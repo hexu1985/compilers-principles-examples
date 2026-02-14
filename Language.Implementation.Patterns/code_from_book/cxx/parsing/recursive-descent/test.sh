@@ -1,3 +1,8 @@
 #!/usr/bin/bash
 
-./Test "[a, b, c, d]"
+./Test "[a, b]"
+
+./Test "[a, ]"
+
+./Test "[a, b"
+
