@@ -6,3 +6,6 @@
 
 ./Test "[a, b"
 
+./Test "[a,b=c,[d,e]]"
+
+./Test "[a,b=c,,[d,e]]"

@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 #include "Token.hpp"
 #include "Lexer.hpp"
 

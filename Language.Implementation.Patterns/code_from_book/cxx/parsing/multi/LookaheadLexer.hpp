@@ -13,6 +13,7 @@ public:
     static const int COMMA = 3;
     static const int LBRACK = 4;
     static const int RBRACK = 5;
+    static const int EQUALS = 6;
 
     static const char* tokenNames[];
 
