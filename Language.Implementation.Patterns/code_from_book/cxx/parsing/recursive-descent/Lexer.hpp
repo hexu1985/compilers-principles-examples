@@ -15,41 +15,28 @@ public:
 
 protected:
     std::string input;   // input string
-    int p;               // index into input of current character
+    size_t p = 0;        // index into input of current character
     int c;               // current character
 
 public:
-    Lexer(const std::string& input) : input(input), p(0) {
-        if (input.empty())
-            c = EOF;
-        else
-            c = static_cast<unsigned char>(input[0]); // prime lookahead
+    Lexer(const std::string& input_) : input(input_) {
+        c = input.at(p); // prime lookahead
     }
 
     virtual ~Lexer() = default;
 
     /** Move one character; detect "end of file" */
     void consume() {
-        ++p;
-        if (p >= static_cast<int>(input.length()))
-            c = EOF;
-        else
-            c = static_cast<unsigned char>(input[p]);
+        p++;
+        if (p >= input.length()) c = EOF;
+        else c = input.at(p);
     }
 
     /** Ensure x is next character on the input stream */
     void match(char x) {
-        if (c == x) {
-            consume();
-        } else {
-            std::string msg = "expecting ";
-            msg += x;
-            msg += "; found ";
-            if (c == EOF)
-                msg += "EOF";
-            else
-                msg += static_cast<char>(c);
-            throw std::runtime_error(msg);
+        if (c == x) consume();
+        else {
+            throw std::runtime_error(std::string("expecting")+x+"; found "+static_cast<char>(c));
         }
     }
 
