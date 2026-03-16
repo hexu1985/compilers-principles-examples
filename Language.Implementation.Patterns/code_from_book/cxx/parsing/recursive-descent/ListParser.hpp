@@ -17,16 +17,16 @@ private:
     /** elements : element (',' element)* ; */
     void elements() {
         element();
-        while ( lookahead->type == ListLexer::COMMA ) {
+        while ( lookahead.type == ListLexer::COMMA ) {
             match(ListLexer::COMMA); element();
         }
     }
     
     /** element : name | list ; // element is name or nested list */
     void element() {
-        if ( lookahead->type == ListLexer::NAME ) match(ListLexer::NAME);
-        else if ( lookahead->type == ListLexer::LBRACK ) list();
-        else throw std::runtime_error("expecting name or list; found " + lookahead->toString());
+        if ( lookahead.type == ListLexer::NAME ) match(ListLexer::NAME);
+        else if ( lookahead.type == ListLexer::LBRACK ) list();
+        else throw std::runtime_error("expecting name or list; found " + lookahead.toString());
     }
 };
 

@@ -40,6 +40,6 @@ public:
         }
     }
 
-    virtual std::unique_ptr<Token> nextToken() = 0;
+    virtual Token nextToken() = 0;
     virtual std::string getTokenName(int tokenType) = 0;
 };
