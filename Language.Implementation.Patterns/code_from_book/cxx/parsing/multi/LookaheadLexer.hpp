@@ -34,6 +34,7 @@ public:
                 case ',': consume(); return Token{COMMA, ","};
                 case '[': consume(); return Token{LBRACK, "["};
                 case ']': consume(); return Token{RBRACK, "]"};
+                case '=': consume(); return Token{EQUALS, "="};
                 default:
                     if (isLETTER()) return name();
                     throw std::runtime_error(std::string("invalid character: ") + static_cast<char>(c));
