@@ -15,21 +15,26 @@ public:
 
 protected:
     std::string input;   // input string
-    size_t p = 0;        // index into input of current character
+    size_t i = 0;        // index into input of current character
     int c;               // current character
 
 public:
     Lexer(const std::string& input_) : input(input_) {
-        c = input.at(p); // prime lookahead
+        c = input.at(i); // prime lookahead
     }
 
     virtual ~Lexer() = default;
 
     /** Move one character; detect "end of file" */
     void consume() {
-        p++;
-        if (p >= input.length()) c = EOF;
-        else c = input.at(p);
+        advance(); WS();
+    }
+
+    /** Move one character; detect "end of file" */
+    void advance() {
+        i++;
+        if ( i>= input.length() ) c = EOF;
+        else c = input.at(i);
     }
 
     /** Ensure x is next character on the input stream */
@@ -41,5 +46,6 @@ public:
     }
 
     virtual std::unique_ptr<Token> nextToken() = 0;
-    virtual std::string getTokenName(int tokenType) = 0;
+    virtual void WS() = 0;
+    virtual std::string getTokenName(int x) = 0;
 };
