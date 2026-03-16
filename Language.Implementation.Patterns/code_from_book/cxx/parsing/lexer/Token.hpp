@@ -7,7 +7,7 @@ public:
     int type;
     std::string text;
 
-    Token(int type, const std::string& text) : type(type), text(text) {}
+    Token(int type_, const std::string& text_) : type(type_), text(text_) {}
 
     std::string toString() const; 
 };
