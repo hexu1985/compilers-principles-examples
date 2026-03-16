@@ -26,26 +26,26 @@ public:
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
-    std::unique_ptr<Token> nextToken() override {
+    Token nextToken() override {
         while (c != EOF) {
             switch (c) {
                 case ' ': case '\t': case '\n': case '\r': WS(); continue;
-                case ',': consume(); return std::make_unique<Token>(COMMA, ",");
-                case '[': consume(); return std::make_unique<Token>(LBRACK, "[");
-                case ']': consume(); return std::make_unique<Token>(RBRACK, "]");
+                case ',': consume(); return Token{COMMA, ","};
+                case '[': consume(); return Token{LBRACK, "["};
+                case ']': consume(); return Token{RBRACK, "]"};
                 default:
                     if (isLETTER()) return name();
                     throw std::runtime_error(std::string("invalid character: ") + static_cast<char>(c));
             }
         }
-        return std::make_unique<Token>(EOF_TYPE, "<EOF>");
+        return Token{EOF_TYPE, "<EOF>"};
     }
 
     /** name : LETTER+ ; // name is sequence of >=1 letter */
-    std::unique_ptr<Token> name() {
+    Token name() {
         std::string buf;
         do { buf.push_back(static_cast<char>(c)); LETTER(); } while (isLETTER());
-        return std::make_unique<Token>(NAME, buf);
+        return Token{NAME, buf};
     }
 
     /** LETTER   : 'a'..'z'|'A'..'Z'; // define what a letter is (\w) */

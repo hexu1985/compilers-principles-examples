@@ -9,7 +9,7 @@
 class Parser {
 protected:
     std::unique_ptr<Lexer> input;     // from where do we get tokens?
-    std::unique_ptr<Token> lookahead; // the current lookahead token
+    Token lookahead;                  // the current lookahead token
 
 public:
     Parser(std::unique_ptr<Lexer> input_) : input(std::move(input_)) {
@@ -20,15 +20,15 @@ public:
 
     /** If lookahead token type matches x, consume & return else error */
     void match(int x) {
-        if (lookahead->type == x) consume();
+        if (lookahead.type == x) consume();
         else {
             throw std::runtime_error("expecting " + input->getTokenName(x) +
-                                     "; found " + lookahead->toString());
+                                     "; found " + lookahead.toString());
         }
     }
 
     void consume() {
-        lookahead = std::move(input->nextToken());
+        lookahead = input->nextToken();
     }
 };
 
