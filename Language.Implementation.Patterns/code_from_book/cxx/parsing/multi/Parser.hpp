@@ -20,9 +20,8 @@ public:
 
     /** If lookahead token type matches x, consume & return else error */
     void match(int x) {
-        if (lookahead->type == x) {
-            consume();
-        } else {
+        if (lookahead->type == x) consume();
+        else {
             throw std::runtime_error("expecting " + input->getTokenName(x) +
                                      "; found " + lookahead->toString());
         }
