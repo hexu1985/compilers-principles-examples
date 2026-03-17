@@ -1,5 +1,5 @@
 ### 解析模式
 
-- [2.4-2 LL(1)递归下降的词法解析器](lexer)
-- [2.4-3 LL(1)递归下降的语法解析器](recursive-descent)
-- [2.4-3 LL(k)递归下降的语法解析器](multi)
+- [P.2. LL(1) Recursive-Descent Lexer](lexer)
+- [P.3. LL(1) Recursive-Descent Parser](recursive-descent)
+- [P.4. LL(k) Recursive-Descent Parser](multi)
