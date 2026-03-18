@@ -36,7 +36,7 @@ public:
     }
 
     void match(int x) {
-        if ( LA(1) == x) consume();
+        if ( LA(1) == x ) consume();
         else {
             throw std::runtime_error("expecting " + input->getTokenName(x) +
                                      "; found " + LT(1).toString());

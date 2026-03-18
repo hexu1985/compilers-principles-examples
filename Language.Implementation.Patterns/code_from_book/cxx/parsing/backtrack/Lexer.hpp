@@ -27,7 +27,7 @@ public:
 
     /** Move one character; detect "end of file" */
     void consume() {
-        advance(); WS();
+        advance();
     }
 
     /** Move one character; detect "end of file" */

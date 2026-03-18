@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++14
+CXXFLAGS = -Wall -std=c++14 -g
 PROGRAM = Test
 
 SOURCES = $(shell ls *.cpp)

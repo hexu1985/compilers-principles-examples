@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-class LookaheadLexer : public Lexer {
+class BacktrackLexer : public Lexer {
 public:
     static const int NAME = 2;
     static const int COMMA = 3;
@@ -17,7 +17,7 @@ public:
 
     static const char* tokenNames[];
 
-    LookaheadLexer(const std::string& input) : Lexer(input) {}
+    BacktrackLexer(const std::string& input) : Lexer(input) {}
 
     std::string getTokenName(int x) override {
         return tokenNames[x];
@@ -46,7 +46,7 @@ public:
     /** name : LETTER+ ; // name is sequence of >=1 letter */
     Token name() {
         std::string buf;
-        do { buf.push_back(static_cast<char>(c)); LETTER(); } while (isLETTER());
+        while ( isLETTER() ) { buf.push_back(static_cast<char>(c)); LETTER(); }
         return Token{NAME, buf};
     }
 

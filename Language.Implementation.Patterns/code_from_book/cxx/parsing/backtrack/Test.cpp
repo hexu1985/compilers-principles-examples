@@ -1,10 +1,10 @@
-#include "LookaheadLexer.hpp"
-#include "LookaheadParser.hpp"
+#include "BacktrackLexer.hpp"
+#include "BacktrackParser.hpp"
 
 int main(int argc, char* argv[]) {
-    auto lexer = std::make_unique<LookaheadLexer>(argv[1]);  // parse command-line arg
-    LookaheadParser parser(std::move(lexer), 2);
-    parser.list();  // begin parsing at rule list
+    auto lexer = std::make_unique<BacktrackLexer>(argv[1]);  // parse arg
+    BacktrackParser parser(std::move(lexer));
+    parser.stat();  // begin parsing at rule stat
 
     return 0;
 }
