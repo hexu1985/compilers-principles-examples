@@ -1,4 +1,4 @@
-### 解析模式
+### Parsing Patterns
 
 - [2 LL(1) Recursive-Descent Lexer](lexer)
 - [3 LL(1) Recursive-Descent Parser](recursive-descent)
