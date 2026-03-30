@@ -5,11 +5,14 @@
 #include <stdexcept>
 #include <vector>
 #include <cassert>
+#include <iostream>
+#include <unordered_map>
 #include "Token.hpp"
 #include "Lexer.hpp"
 #include "RecognitionException.hpp"
 #include "NoViableAltException.hpp"
 #include "MismatchedTokenException.hpp"
+#include "PreviousParseFailedException.hpp"
 
 class Parser {
 protected:
@@ -18,6 +21,9 @@ protected:
     std::vector<Token> lookahead;   // dynamically-sized lookahead buffer
     int p = 0;                      // index of current lookahead token;
                                     // LT(1) returns lookahead[p]
+
+public:
+    static const int FAILED = -1;   // parsing failed on last attempt
 
 public:
     Parser(std::unique_ptr<Lexer> input_) : input(std::move(input_)) {
@@ -33,6 +39,7 @@ public:
             // if so, it's an opportunity to start filling at index 0 again
             p = 0;
             lookahead.clear(); // size goes to 0, but retains memory
+            clearMemo();       // clear any rule_memo dictionaries
         }
         sync(1); // get another to replace consumed token
     }
@@ -65,8 +72,12 @@ public:
         }
     }
 
+    /** Actual parser implements to clear any rule_memo dictionaries */
+    virtual void clearMemo() = 0;
+
     int mark() {
-        markers.push_back(p); return p;
+        markers.push_back(p);
+        return p;
     }
 
     void release() {
@@ -83,5 +94,41 @@ public:
     bool isSpeculating() {
         return markers.size() > 0;
     }
+
+    /** Have we parsed a particular rule before at this input position?
+     *  If no memoization value, we've never parsed here before.
+     *  If memoization value is FAILED, we parsed and failed before.
+     *  If value >= 0, it is an index into the token buffer.  It indicates
+     *  a previous successful parse.  This method has a side effect:
+     *  it seeks ahead in the token buffer to avoid reparsing.
+     */
+    bool alreadyParsedRule(std::unordered_map<int, int>& memoization) {
+        auto it = memoization.find(index());
+        if (it == memoization.end()) return false;
+
+        int memo = it->second;
+        std::cout << "parsed list before at index " << index()
+            << "; skip ahead to token index " << memo << ": "
+            << lookahead[memo].text << std::endl;
+
+        if (memo == FAILED) throw PreviousParseFailedException();
+        // else skip ahead, pretending we parsed this rule ok
+        seek(memo);
+        return true;
+    }
+
+    /** While backtracking, record partial parsing results.
+     *  If invoking rule method failed, record that fact.
+     *  If it succeeded, record the token position we should skip to
+     *  next time we attempt this rule for this input position.
+     */
+    void memoize(std::unordered_map<int, int>& memoization,
+            int startTokenIndex, bool failed) {
+        // record token just after last in rule if success
+        int stopTokenIndex = failed ? FAILED : index();
+        memoization[startTokenIndex] = stopTokenIndex;
+    }
+
+    int index() { return p; } // return current input position
 };
 
