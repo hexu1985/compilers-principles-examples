@@ -3,7 +3,6 @@
 #include "Token.hpp"
 #include "AST.hpp"
 
-// Test 类（main 函数）
 int main() {
     auto plus = std::make_shared<Token>(Token::PLUS, "+");
     auto one  = std::make_shared<Token>(Token::INT, "1");
