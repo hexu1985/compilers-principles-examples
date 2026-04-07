@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include "AST.hpp" // Assuming AST class is in this header
+#include "AST.hpp"
 
 class ExprNode : public AST {
 public:

@@ -6,11 +6,9 @@
 
 class VectorNode : public ExprNode {
 public:
+    std::vector<std::shared_ptr<ExprNode>> elements;
+
     VectorNode(std::shared_ptr<Token> t, const std::vector<std::shared_ptr<ExprNode>>& elements)
-        : ExprNode(t) {
-        evalType = tVECTOR; // track vector token; likely to be imaginary token
-        for (const auto& e : elements) {
-            addChild(e); // add as kids
-        }
+        : ExprNode(t), elements(elements) { // track vector token; most likely it's an imaginary token
     }
 };

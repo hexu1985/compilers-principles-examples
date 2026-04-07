@@ -5,7 +5,5 @@
 
 class IntNode : public ExprNode {
 public:
-    IntNode(std::shared_ptr<Token> t) : ExprNode(t) {
-        evalType = tINTEGER;
-    }
+    IntNode(std::shared_ptr<Token> t) : ExprNode(t) { }
 };
