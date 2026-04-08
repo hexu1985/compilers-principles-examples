@@ -1,5 +1,12 @@
 #include "Token.hpp"
 
-const int Token::INVALID_TOKEN_TYPE;
-const int Token::PLUS;
-const int Token::INT;
+constexpr int Token::PLUS;
+constexpr int Token::MULT;
+constexpr int Token::DOT;
+constexpr int Token::INT;
+constexpr int Token::VEC;
+constexpr int Token::ID;
+constexpr int Token::ASSIGN;
+constexpr int Token::PRINT;
+constexpr int Token::STAT_LIST;
+constexpr int Token::INVALID_TOKEN_TYPE;

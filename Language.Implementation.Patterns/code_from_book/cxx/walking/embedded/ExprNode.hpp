@@ -2,9 +2,9 @@
 
 #include <string>
 #include <memory>
-#include "HeteroAST.hpp"
+#include "VecMathNode.hpp"
 
-class ExprNode : public HeteroAST {
+class ExprNode : public VecMathNode {
 public:
-    ExprNode(std::shared_ptr<Token> t) : HeteroAST(t) { }
+    ExprNode(std::shared_ptr<Token> t) : VecMathNode(t) { }
 };

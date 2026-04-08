@@ -5,6 +5,7 @@
 #include "Token.hpp"
 
 class HeteroAST {   // Heterogeneous AST node type
+protected:
     std::shared_ptr<Token> token;   // Node created from which token?
 
 public:
@@ -16,13 +17,8 @@ public:
 
     virtual ~HeteroAST();
 
-    /** Compute string for single node */
     virtual std::string toString() const {
-        return token ? token->toString() : "";
-    }
-
-    /** Compute string for a whole tree not just node; default: print token */
-    virtual std::string toStringTree() const {
-        return toString();
+        return token->toString();
     }
 };
+
