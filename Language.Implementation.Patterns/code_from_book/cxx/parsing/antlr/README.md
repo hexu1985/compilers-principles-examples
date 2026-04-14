@@ -2,7 +2,7 @@
 ### 手动安装antlr4
 ```bash
 # 安装 Java（如果尚未安装）
-$ sudo apt install openjdk-21-jre-headless
+$ sudo apt install openjdk-21-jre
 # 下载 ANTLR4 工具 jar
 $ curl -O https://www.antlr.org/download/antlr-4.13.0-complete.jar
 $ sudo mv antlr-4.13.0-complete.jar /usr/local/lib
