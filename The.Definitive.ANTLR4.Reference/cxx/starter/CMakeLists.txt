@@ -13,5 +13,9 @@ include_directories( ${ANTLR4_DIR}/include/antlr4-runtime ${CMAKE_CURRENT_SOURCE
 link_directories( ${ANTLR4_DIR}/lib )
 
 file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.h)
+
 add_executable( Test Test.cpp ${GEN_SOURCES} )
 target_link_libraries( Test antlr4-runtime )
+
+add_executable( Translate Translate.cpp ${GEN_SOURCES} )
+target_link_libraries( Translate antlr4-runtime )
