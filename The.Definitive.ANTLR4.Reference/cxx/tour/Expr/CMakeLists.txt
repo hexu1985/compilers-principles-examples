@@ -9,11 +9,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message( STATUS "CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}" )
 message( STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}" )
 
-include_directories( ${ANTLR4_DIR}/include/antlr4-runtime )
+include_directories( ${ANTLR4_DIR}/include/antlr4-runtime ${CMAKE_CURRENT_SOURCE_DIR}/gen )
 link_directories( ${ANTLR4_DIR}/lib )
 
+file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.h)
+
 ### test datafile
-set(DATAFILES box box.error)
+set(DATAFILES t.expr)
 
 foreach(datafile ${DATAFILES})
     add_custom_command(
@@ -28,11 +30,10 @@ foreach(datafile ${DATAFILES})
 endforeach()
 
 add_custom_target(copy_datafiles ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/box
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/box.error
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/t.expr
 )
 
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-add_executable( Test ${SOURCES} )
-target_link_libraries( Test antlr4-runtime )
-add_dependencies( Test copy_datafiles )
+add_executable( ExprJoyRide ExprJoyRide.cpp ${GEN_SOURCES} )
+target_link_libraries( ExprJoyRide antlr4-runtime )
+add_dependencies( ExprJoyRide copy_datafiles )
+

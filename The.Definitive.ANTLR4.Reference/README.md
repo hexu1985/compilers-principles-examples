@@ -23,6 +23,7 @@ $ echo 'alias grun="java org.antlr.v4.runtime.misc.TestRig"' >> ~/.bashrc
 ### 编译并安装匹配版本的 C++ 运行时库
 ```bash
 # 下载源码（版本号必须与 jar 一致）
+# git clone https://gitee.com/trusted-list/antlr4.git
 $ git clone https://github.com/antlr/antlr4.git
 $ cd antlr4
 $ git checkout 4.13.0

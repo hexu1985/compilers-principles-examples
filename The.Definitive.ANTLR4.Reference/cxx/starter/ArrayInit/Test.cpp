@@ -6,23 +6,20 @@
 using namespace antlr4;
 
 int main() {
-    // 创建一个从标准输入读取的 CharStream
+    // create a CharStream that reads from standard input
     ANTLRInputStream input(std::cin);
 
-    // 创建词法分析器，使用该 CharStream
+    // create a lexer that feeds off of input CharStream
     ArrayInitLexer lexer(&input);
 
-    // 创建令牌流，从词法分析器获取令牌
+    // create a buffer of tokens pulled from the lexer
     CommonTokenStream tokens(&lexer);
 
-    // 创建语法分析器，使用令牌流
+    // create a parser that feeds off the tokens buffer
     ArrayInitParser parser(&tokens);
 
-    // 开始解析，起始规则为 init
-    tree::ParseTree *tree = parser.init();
-
-    // 以 LISP 风格打印语法树
-    std::cout << tree->toStringTree(&parser) << std::endl;
+    tree::ParseTree *tree = parser.init();  // begin parsing at init rule
+    std::cout << tree->toStringTree(&parser) << std::endl;  // print LISP-style tree
 
     return 0;
 }
