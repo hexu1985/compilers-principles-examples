@@ -7,8 +7,13 @@
 grammar Java;
 
 @lexer::members {
-  protected boolean enumIsKeyword = true;
-  protected boolean assertIsKeyword = true;
+  protected:
+    bool enumIsKeyword = true;
+    bool assertIsKeyword = true;
+
+  public:
+    void setEnumIsKeyword(bool value) { enumIsKeyword = value; }
+    void setAssertIsKeyword(bool value) { assertIsKeyword = value; }
 }
 
 // starting point for parsing a java file
@@ -667,11 +672,11 @@ UnicodeEscape
     :   '\\' 'u' HexDigit HexDigit HexDigit HexDigit
     ;
 
-ENUM:   'enum' {if (!enumIsKeyword) setType(Identifier);}
+ENUM:   'enum' { if (!enumIsKeyword) setType(Identifier); }
     ;
 
 ASSERT
-    :   'assert' {if (!assertIsKeyword) setType(Identifier);}
+    :   'assert' { if (!assertIsKeyword) setType(Identifier); }
     ;
 
 Identifier

@@ -37,8 +37,13 @@ public:
   ~JavaLexer() override;
 
 
-    protected boolean enumIsKeyword = true;
-    protected boolean assertIsKeyword = true;
+    protected:
+      bool enumIsKeyword = true;
+      bool assertIsKeyword = true;
+
+    public:
+      void setEnumIsKeyword(bool value) { enumIsKeyword = value; }
+      void setAssertIsKeyword(bool value) { assertIsKeyword = value; }
 
 
   std::string getGrammarFileName() const override;

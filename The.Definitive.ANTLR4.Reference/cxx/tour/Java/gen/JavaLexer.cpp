@@ -477,7 +477,7 @@ void JavaLexer::action(RuleContext *context, size_t ruleIndex, size_t actionInde
 
 void JavaLexer::ENUMAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
-    case 0: if (!enumIsKeyword) setType(Identifier); break;
+    case 0:  if (!enumIsKeyword) setType(Identifier);  break;
 
   default:
     break;
@@ -486,7 +486,7 @@ void JavaLexer::ENUMAction(antlr4::RuleContext *context, size_t actionIndex) {
 
 void JavaLexer::ASSERTAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
-    case 1: if (!assertIsKeyword) setType(Identifier); break;
+    case 1:  if (!assertIsKeyword) setType(Identifier);  break;
 
   default:
     break;
