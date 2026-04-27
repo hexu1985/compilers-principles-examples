@@ -1,10 +1,14 @@
 grammar Rows;
 
-@parser::members { // add members to generated RowsParser
+@parser::header {
+#include <iostream>
+}
+
+@parser::members {  // add members to generated RowsParser
+public:
     int col;
-    public RowsParser(TokenStream input, int col) { // custom constructor
-        this(input);
-        this.col = col;
+    RowsParser(antlr4::TokenStream *input, int col) : RowsParser(input) {   // custom constructor
+        this->col = col;
     }
 }
 
@@ -15,7 +19,9 @@ locals [int i=0]
     : (   STUFF
           {
           $i++;
-          if ( $i == col ) System.out.println($STUFF.text);
+          if ($i == col) {
+              std::cout << $STUFF->getText() << std::endl;
+          }
           }
       )+
     ;
