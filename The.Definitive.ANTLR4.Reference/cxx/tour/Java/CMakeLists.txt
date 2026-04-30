@@ -37,3 +37,7 @@ add_executable( ExtractInterfaceTool ExtractInterfaceTool.cpp ${GEN_SOURCES} )
 target_link_libraries( ExtractInterfaceTool antlr4-runtime )
 add_dependencies( ExtractInterfaceTool copy_datafiles )
 
+add_executable( InsertSerialID InsertSerialID.cpp ${GEN_SOURCES} )
+target_link_libraries( InsertSerialID antlr4-runtime )
+add_dependencies( InsertSerialID copy_datafiles )
+
