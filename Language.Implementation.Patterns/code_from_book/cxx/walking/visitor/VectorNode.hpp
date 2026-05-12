@@ -14,14 +14,7 @@ public:
         : ExprNode(token), elements(elements) { // track vector token; most likely it's an imaginary token
     }
 
-    void print() const override {
-        std::cout << "[";
-        if (!elements.empty()) {
-            for (size_t i = 0; i < elements.size(); ++i) {
-                if (i > 0) std::cout << ", ";
-                elements[i]->print();
-            }
-        }
-        std::cout << "]";
+    void visit(VecMathVisitor* visitor) override {
+        visitor->visit(this);
     }
 };

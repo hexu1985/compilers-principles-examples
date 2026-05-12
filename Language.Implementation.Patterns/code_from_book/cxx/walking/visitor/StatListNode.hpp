@@ -16,9 +16,7 @@ public:
         : VecMathNode(std::make_shared<Token>(Token::STAT_LIST)), elements(elements) {  // create imaginary token
     }
 
-    void print() const override {
-        for (const auto& n : elements) {
-            n->print();
-        }
+    void visit(VecMathVisitor* visitor) override {
+        visitor->visit(this);
     }
 };

@@ -6,4 +6,8 @@
 class IntNode : public ExprNode {
 public:
     IntNode(std::shared_ptr<Token> t) : ExprNode(t) { }
+
+    void visit(VecMathVisitor* visitor) override {
+        visitor->visit(this);
+    }
 };

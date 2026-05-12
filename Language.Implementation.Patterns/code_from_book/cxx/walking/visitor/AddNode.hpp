@@ -11,9 +11,7 @@ public:
     AddNode(std::shared_ptr<ExprNode> left, std::shared_ptr<Token> t, std::shared_ptr<ExprNode> right)
         : ExprNode(t), left(left), right(right) { }
 
-    void print() const override {
-        left->print();          // walk left child
-        std::cout << "+";       // print operator
-        right->print();         // walk right child
+    void visit(VecMathVisitor* visitor) override {
+        visitor->visit(this);
     }
 };

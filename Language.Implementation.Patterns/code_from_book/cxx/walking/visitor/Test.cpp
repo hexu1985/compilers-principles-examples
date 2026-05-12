@@ -12,6 +12,8 @@
 #include "PrintNode.hpp"
 #include "StatListNode.hpp"
 #include "AssignNode.hpp"
+#include "PrintVisitor.hpp"
+#include "IndependentPrintVisitor.hpp" 
 
 static std::shared_ptr<IntNode> I(int i) {
     return std::make_shared<IntNode>(std::make_shared<Token>(Token::INT, std::to_string(i)));
@@ -36,9 +38,15 @@ int main() {
     auto pv = std::make_shared<MultNode>(xref, mult, v);
     auto p = std::make_shared<PrintNode>(std::make_shared<Token>(Token::PRINT, "print"), pv);
     stats.push_back(p);
-
     auto statlist = std::make_shared<StatListNode>(stats);
-    statlist->print(); // Launch embedded walker
 
+    // Create visitor and then call visit on root node (statlist)
+    PrintVisitor visitor;
+    statlist->visit(&visitor); // tell root node to visit with this visitor
+
+    // Create visitor and then visit root node (statlist)
+    IndependentPrintVisitor indepVisitor;
+    indepVisitor.print(statlist.get()); // tell visitor to print from root
+        
     return 0;
 }
