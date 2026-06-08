@@ -14,30 +14,9 @@ link_directories( ${ANTLR4_DIR}/lib )
 
 file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.h)
 
-### test datafile
-set(DATAFILES Demo.java)
-
-foreach(datafile ${DATAFILES})
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${datafile}
-        #COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_SOURCE_DIR}/${datafile}
-                ${CMAKE_CURRENT_BINARY_DIR}/${datafile}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${datafile}
-        COMMENT "Copying test datafile ${datafile}"
-    )
-endforeach()
-
-add_custom_target(copy_datafiles ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Demo.java
-)
-
 add_executable( ExtractInterfaceTool ExtractInterfaceTool.cpp ${GEN_SOURCES} )
 target_link_libraries( ExtractInterfaceTool antlr4-runtime )
-add_dependencies( ExtractInterfaceTool copy_datafiles )
 
 add_executable( InsertSerialID InsertSerialID.cpp ${GEN_SOURCES} )
 target_link_libraries( InsertSerialID antlr4-runtime )
-add_dependencies( InsertSerialID copy_datafiles )
 
