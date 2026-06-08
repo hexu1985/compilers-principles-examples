@@ -4,25 +4,24 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++17 -I$(ANTLR4_DIR)/include/antlr4-runtime -I./gen
 LDFLAGS = -Wl,-rpath,$(ANTLR4_DIR)/lib -Wl,--enable-new-dtags -L$(ANTLR4_DIR)/lib
 LDLIBS = -lantlr4-runtime 
-PROGRAM = ExprJoyRide
 
-SOURCES = $(shell ls */*.cpp)
-HEADERS = $(shell ls */*.h)
+SOURCES = $(shell ls gen/*.cpp)
+HEADERS = $(shell ls gen/*.h)
 OBJECTS = $(patsubst %.cpp,%.o,$(SOURCES))
 
-PROGRAM_SOURCES = $(shell ls *.cpp)
-PROGRAM_OBJECTS = $(patsubst %.cpp,%.o,$(PROGRAM_SOURCES))
+PROGRAMS_SOURCES = $(shell ls *.cpp)
+PROGRAMS = $(patsubst %.cpp,%,$(PROGRAMS_SOURCES))
 
 .PHONY: all 
-all: $(PROGRAM)
+all: $(PROGRAMS)
 
-$(PROGRAM): $(OBJECTS) $(PROGRAM_OBJECTS)
-	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) $(PROGRAM_OBJECTS) $(LDLIBS)
+$(PROGRAMS): %: %.o $(OBJECTS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
-	rm -f $(OBJECTS) $(PROGRAM_OBJECTS) $(PROGRAM)
+	rm -f *.o $(OBJECTS) $(PROGRAMS)
 

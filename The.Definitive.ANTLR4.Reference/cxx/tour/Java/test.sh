@@ -1,2 +1,2 @@
 
-./build/ExtractInterfaceTool Demo.java
+./ExtractInterfaceTool Demo.java
