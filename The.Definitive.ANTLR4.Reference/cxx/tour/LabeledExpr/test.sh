@@ -1,1 +1,1 @@
-./build/Calc t.expr
+./Calc t.expr

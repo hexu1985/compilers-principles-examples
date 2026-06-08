@@ -1,1 +1,1 @@
-./build/ExprJoyRide t.expr
+./ExprJoyRide t.expr
