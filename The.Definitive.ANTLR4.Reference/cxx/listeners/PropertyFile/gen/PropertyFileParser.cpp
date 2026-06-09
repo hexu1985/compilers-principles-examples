@@ -3,6 +3,7 @@
 
 
 #include "PropertyFileListener.h"
+#include "PropertyFileVisitor.h"
 
 #include "PropertyFileParser.h"
 
@@ -145,6 +146,14 @@ void PropertyFileParser::FileContext::exitRule(tree::ParseTreeListener *listener
     parserListener->exitFile(this);
 }
 
+
+std::any PropertyFileParser::FileContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<PropertyFileVisitor*>(visitor))
+    return parserVisitor->visitFile(this);
+  else
+    return visitor->visitChildren(this);
+}
+
 PropertyFileParser::FileContext* PropertyFileParser::file() {
   FileContext *_localctx = _tracker.createInstance<FileContext>(_ctx, getState());
   enterRule(_localctx, 0, PropertyFileParser::RuleFile);
@@ -209,6 +218,14 @@ void PropertyFileParser::PropContext::exitRule(tree::ParseTreeListener *listener
   auto parserListener = dynamic_cast<PropertyFileListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitProp(this);
+}
+
+
+std::any PropertyFileParser::PropContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<PropertyFileVisitor*>(visitor))
+    return parserVisitor->visitProp(this);
+  else
+    return visitor->visitChildren(this);
 }
 
 PropertyFileParser::PropContext* PropertyFileParser::prop() {
