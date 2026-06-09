@@ -15,40 +15,38 @@
 using namespace antlr4;
 using namespace antlr4::tree;
 
-// 有序的哈希映射（C++ 标准库 unordered_map 不保证顺序，这里用一个简单的 vector 维护顺序）
-struct OrderedHashMap : public std::unordered_map<std::string, std::string> {
-    std::vector<std::string> order;
-
-    void put(const std::string& key, const std::string& value) {
-        if (find(key) == end()) {
-            order.push_back(key);
+// 通用打印函数，适用于任意键值类型的 unordered_map
+template<typename K, typename V>
+void printUnorderedMap(const std::unordered_map<K, V>& map) {
+    std::cout << "{";
+    bool first = true;
+    for (const auto& pair : map) {
+        if (!first) {
+            std::cout << ", ";
         }
-        (*this)[key] = value;
+        std::cout << pair.first << ":" << pair.second;
+        first = false;
     }
-
-    friend std::ostream& operator<<(std::ostream& os, const OrderedHashMap& map) {
-        os << "{";
-        for (size_t i = 0; i < map.order.size(); ++i) {
-            const auto& key = map.order[i];
-            os << key << "=" << map.at(key);
-            if (i != map.order.size() - 1) os << ", ";
-        }
-        os << "}";
-        return os;
-    }
-};
+    std::cout << "}" << std::endl;
+}
 
 // Listener 类
 class PropertyFileLoader : public PropertyFileBaseListener {
 public:
-    OrderedHashMap props;
+    std::unordered_map<std::string, std::string> props;
 
     void exitProp(PropertyFileParser::PropContext* ctx) override {
         std::string id = ctx->ID()->getText();
         std::string value = ctx->STRING()->getText();
-        props.put(id, value);
+        props[id] = value;
     }
 };
+
+std::unique_ptr<ANTLRFileStream> makeANTLRFileStream(const std::string& fileName) {
+    auto input = std::make_unique<ANTLRFileStream>();
+    input->loadFromFile(fileName);
+    return input;
+}
 
 int main(int argc, char* argv[]) {
     std::string inputFile;
@@ -56,29 +54,22 @@ int main(int argc, char* argv[]) {
         inputFile = argv[1];
     }
 
-    std::unique_ptr<std::istream> inputStream;
+    std::unique_ptr<ANTLRInputStream> input;
     if (!inputFile.empty()) {
-        inputStream = std::make_unique<std::ifstream>(inputFile);
-        if (!*dynamic_cast<std::ifstream*>(inputStream.get())) {
-            std::cerr << "Cannot open file: " << inputFile << std::endl;
-            return 1;
-        }
+        input = makeANTLRFileStream(inputFile);
     } else {
-        inputStream = std::make_unique<std::istream>(std::cin.rdbuf());
+        input = std::make_unique<ANTLRInputStream>(std::cin);
     }
-
-    ANTLRInputStream input(*inputStream);
-    PropertyFileLexer lexer(&input);
+    PropertyFileLexer lexer(input.get());
     CommonTokenStream tokens(&lexer);
     PropertyFileParser parser(&tokens);
-
     tree::ParseTree* tree = parser.file();
 
     ParseTreeWalker walker;
     PropertyFileLoader loader;
     walker.walk(&loader, tree);
 
-    std::cout << loader.props << std::endl;
+    printUnorderedMap(loader.props);
 
     return 0;
 }
