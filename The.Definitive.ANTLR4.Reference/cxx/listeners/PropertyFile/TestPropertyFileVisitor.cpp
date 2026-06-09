@@ -8,9 +8,6 @@
 #include "PropertyFileLexer.h"
 #include "PropertyFileParser.h"
 #include "PropertyFileBaseVisitor.h"
-#include "ANTLRInputStream.h"
-#include "CommonTokenStream.h"
-#include "tree/ParseTree.h"
 
 using namespace antlr4;
 using namespace antlr4::tree;
