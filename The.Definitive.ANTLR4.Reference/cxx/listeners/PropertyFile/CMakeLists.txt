@@ -17,4 +17,7 @@ file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOUR
 add_executable( TestPropertyFile TestPropertyFile.cpp ${GEN_SOURCES} )
 target_link_libraries( TestPropertyFile antlr4-runtime )
 
+add_executable( TestPropertyFileVisitor TestPropertyFileVisitor.cpp ${GEN_SOURCES} )
+target_link_libraries( TestPropertyFileVisitor antlr4-runtime )
+
 
