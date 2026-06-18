@@ -16,4 +16,5 @@
 - [7.3 使用访问器编写程序](listeners/PropertyFile)
 - [7.4 标记备选分支以获取精确的事件方法](listeners/Expr)
     + [备选分支增加标签](listeners/LExpr)
+- [7.5 在事件方法中共享信息](listeners/LExpr)
 
