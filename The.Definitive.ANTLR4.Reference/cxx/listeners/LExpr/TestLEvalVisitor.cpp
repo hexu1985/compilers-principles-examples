@@ -16,21 +16,21 @@ using namespace antlr4::tree;
 class EvalVisitor : public LExprBaseVisitor {
 public:
     // 处理乘法规则
-    virtual std::any visitMult(LExprParser::MultContext* ctx) override {
+    std::any visitMult(LExprParser::MultContext* ctx) override {
         int left = std::any_cast<int>(visit(ctx->e(0)));
         int right = std::any_cast<int>(visit(ctx->e(1)));
         return std::any(left * right);
     }
 
     // 处理加法规则
-    virtual std::any visitAdd(LExprParser::AddContext* ctx) override {
+    std::any visitAdd(LExprParser::AddContext* ctx) override {
         int left = std::any_cast<int>(visit(ctx->e(0)));
         int right = std::any_cast<int>(visit(ctx->e(1)));
         return std::any(left + right);
     }
 
     // 处理整数规则
-    virtual std::any visitInt(LExprParser::IntContext* ctx) override {
+    std::any visitInt(LExprParser::IntContext* ctx) override {
         std::string intText = ctx->INT()->getText();
         return std::any(std::stoi(intText));
     }

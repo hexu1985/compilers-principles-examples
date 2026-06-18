@@ -14,11 +14,11 @@ link_directories( ${ANTLR4_DIR}/lib )
 
 file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.h)
 
-add_executable( TestEvaluator TestEvaluator.cpp ${GEN_SOURCES} )
-target_link_libraries( TestEvaluator antlr4-runtime )
+add_executable( TestLEvaluator TestLEvaluator.cpp ${GEN_SOURCES} )
+target_link_libraries( TestLEvaluator antlr4-runtime )
 
-add_executable( TestEvalVisitor TestEvalVisitor.cpp ${GEN_SOURCES} )
-target_link_libraries( TestEvalVisitor antlr4-runtime )
+add_executable( TestLEvalVisitor TestLEvalVisitor.cpp ${GEN_SOURCES} )
+target_link_libraries( TestLEvalVisitor antlr4-runtime )
 
 
 
