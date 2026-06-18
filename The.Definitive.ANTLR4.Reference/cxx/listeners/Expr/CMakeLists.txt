@@ -20,5 +20,8 @@ target_link_libraries( TestEvaluator antlr4-runtime )
 add_executable( TestEvalVisitor TestEvalVisitor.cpp ${GEN_SOURCES} )
 target_link_libraries( TestEvalVisitor antlr4-runtime )
 
+add_executable( TestExprEmitter TestExprEmitter.cpp ${GEN_SOURCES} )
+target_link_libraries( TestExprEmitter antlr4-runtime )
+
 
 
