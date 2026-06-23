@@ -35,7 +35,7 @@ public:
 
     void exitRow(CSVParser::RowContext *ctx) override {
         // If this is the header row, do nothing
-        if (ctx->getParent()->getRuleIndex() == CSVParser::RULE_hdr) {
+        if (static_cast<RuleContext*>(ctx->parent)->getRuleIndex() == CSVParser::RuleHdr) {
             return;
         }
         
