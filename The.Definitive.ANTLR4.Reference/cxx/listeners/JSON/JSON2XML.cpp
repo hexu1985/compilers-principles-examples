@@ -56,7 +56,7 @@ public:
     }
     
     void exitJson(JSONParser::JsonContext* ctx) override {
-        setXML(ctx, getXML(ctx->getChild(0)));
+        setXML(ctx, getXML(ctx->children[0]));
     }
     
     void exitAnObject(JSONParser::AnObjectContext* ctx) override {
