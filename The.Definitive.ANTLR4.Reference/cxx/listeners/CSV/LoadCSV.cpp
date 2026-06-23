@@ -82,24 +82,25 @@ public:
 
 const std::string Loader::EMPTY = "";
 
+std::unique_ptr<ANTLRFileStream> makeANTLRFileStream(const std::string& fileName) {
+    auto input = std::make_unique<ANTLRFileStream>();
+    input->loadFromFile(fileName);
+    return input;
+}
+
 int main(int argc, char* argv[]) {
     std::string inputFile;
     if (argc > 1) {
         inputFile = argv[1];
     }
-    
-    std::ifstream stream;
-    if (!inputFile.empty()) {
-        stream.open(inputFile);
-        if (!stream.is_open()) {
-            std::cerr << "Cannot open file: " << inputFile << std::endl;
-            return 1;
-        }
-    }
 
-    // Create the lexer and parser
-    ANTLRInputStream input(stream);
-    CSVLexer lexer(&input);
+    std::unique_ptr<ANTLRInputStream> input;
+    if (!inputFile.empty()) {
+        input = makeANTLRFileStream(inputFile);
+    } else {
+        input = std::make_unique<ANTLRInputStream>(std::cin);
+    }
+    CSVLexer lexer(input.get());
     CommonTokenStream tokens(&lexer);
     CSVParser parser(&tokens);
 
