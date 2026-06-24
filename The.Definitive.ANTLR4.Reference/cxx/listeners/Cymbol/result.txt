@@ -1,0 +1,18 @@
+edges: {a->b, a->c, a->d, b->c, c->b, fact->print, fact->fact, main->fact, main->a}, functions: {a, b, c, d, e, fact, main}
+digraph G {
+  ranksep=.25;
+  edge [arrowsize=.5]
+  node [shape=circle, fontname="ArialNarrow",
+        fontsize=12, fixedsize=true, height=.45];
+  a; b; c; d; e; fact; main; 
+  a -> b;
+  a -> c;
+  a -> d;
+  b -> c;
+  c -> b;
+  fact -> print;
+  fact -> fact;
+  main -> fact;
+  main -> a;
+}
+
