@@ -119,29 +119,24 @@ public:
     }
 };
 
+std::unique_ptr<ANTLRFileStream> makeANTLRFileStream(const std::string& fileName) {
+    auto input = std::make_unique<ANTLRFileStream>();
+    input->loadFromFile(fileName);
+    return input;
+}
+
 int main(int argc, char** argv) {
     std::string inputFile;
     if (argc > 1) {
         inputFile = argv[1];
     }
     
-    std::unique_ptr<std::ifstream> fileStream;
     std::unique_ptr<ANTLRInputStream> input;
-    
     if (!inputFile.empty()) {
-        fileStream = std::make_unique<std::ifstream>(inputFile);
-        if (!fileStream->is_open()) {
-            std::cerr << "Could not open file: " << inputFile << std::endl;
-            return 1;
-        }
-        input = std::make_unique<ANTLRInputStream>(*fileStream);
+        input = makeANTLRFileStream(inputFile);
     } else {
-        // 从标准输入读取
-        std::stringstream buffer;
-        buffer << std::cin.rdbuf();
-        input = std::make_unique<ANTLRInputStream>(buffer.str());
+        input = std::make_unique<ANTLRInputStream>(std::cin);
     }
-    
     JSONLexer lexer(input.get());
     CommonTokenStream tokens(&lexer);
     JSONParser parser(&tokens);
