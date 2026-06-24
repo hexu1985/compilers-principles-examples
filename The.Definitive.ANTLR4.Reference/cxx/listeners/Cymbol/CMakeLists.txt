@@ -9,6 +9,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message( STATUS "CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}" )
 message( STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}" )
 
+### asan
+option(ENABLE_ASAN "Enable AddressSanitizer" ON)
+
+if(ENABLE_ASAN)
+    message(STATUS "AddressSanitizer enabled")
+    add_compile_options(-g -Wall -fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+endif()
+
 include_directories( ${ANTLR4_DIR}/include/antlr4-runtime ${CMAKE_CURRENT_SOURCE_DIR}/gen )
 link_directories( ${ANTLR4_DIR}/lib )
 
@@ -17,3 +26,5 @@ file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOUR
 add_executable( CallGraph CallGraph.cpp ${GEN_SOURCES} )
 target_link_libraries( CallGraph antlr4-runtime )
 
+add_executable( CheckSymbols CheckSymbols.cpp ${GEN_SOURCES} )
+target_link_libraries( CheckSymbols antlr4-runtime )
