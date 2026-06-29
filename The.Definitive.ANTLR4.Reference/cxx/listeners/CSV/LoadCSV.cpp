@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 
+#include <antlr4-runtime.h>
 #include "CSVLexer.h"
 #include "CSVParser.h"
 #include "CSVBaseListener.h"
