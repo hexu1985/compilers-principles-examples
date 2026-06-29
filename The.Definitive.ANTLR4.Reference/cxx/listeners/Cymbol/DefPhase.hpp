@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <unordered_map>
 #include <iostream>
 #include <memory>
@@ -17,15 +18,22 @@ class DefPhase : public CymbolBaseListener {
 public:
     // ParseTreeProperty<Scope> replacement
     std::unordered_map<antlr4::ParserRuleContext*, Scope*> scopes;
-    GlobalScope* globals;
-    Scope* currentScope; // define symbols in this scope
+    GlobalScope* globals=nullptr;
+    Scope* currentScope=nullptr; // define symbols in this scope
+    std::vector<VariableSymbol*> variableSymbols;
 
 public:
     DefPhase() : globals(nullptr), currentScope(nullptr) {}
 
     virtual ~DefPhase() {
-        // Clean up dynamically allocated scopes if needed
-        // Note: In a real implementation, you'd want to manage ownership carefully
+        for (auto var: variableSymbols) {
+            delete var;
+        }
+        for (auto item: scopes) {
+            auto scope = item.second;
+            delete scope;
+        }
+        delete globals;
     }
 
     void enterFile(CymbolParser::FileContext* ctx) override {
@@ -81,6 +89,7 @@ public:
         int typeTokenType = typeCtx->start->getType();
         Symbol::Type type = CheckSymbols::getType(typeTokenType);
         VariableSymbol* var = new VariableSymbol(nameToken->getText(), type);
+        variableSymbols.push_back(var);
         currentScope->define(var); // Define symbol in current scope
     }
 
