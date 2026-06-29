@@ -61,12 +61,8 @@ void CheckSymbols::process(int argc, char* argv[]) {
     walker.walk(&ref, tree);
 }
 
-void CheckSymbols::main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     CheckSymbols checker;
     checker.process(argc, argv);
-}
-
-int main(int argc, char* argv[]) {
-    CheckSymbols::main(argc, argv);
     return 0;
 }

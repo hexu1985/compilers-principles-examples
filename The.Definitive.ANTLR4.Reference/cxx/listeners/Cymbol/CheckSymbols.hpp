@@ -11,7 +11,5 @@ public:
     static void error(antlr4::Token* t, const std::string& msg); 
 
     void process(int argc, char* argv[]); 
-
-    static void main(int argc, char* argv[]); 
 };
 
