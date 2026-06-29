@@ -9,9 +9,8 @@ point : INT ',' INT ; // E.g., "0,10"
 // END: grammar
 
 // START: lex
-INT : '0'..'9'+ ; // lexer rule to match 1-or-more digits
+INT : [0-9]+ ; // lexer rule to match 1-or-more digits
 
 /** Skip whitespace */
-WS : (' ' | '\t' | '\r' | '\n') {skip();} ;
+WS : [ \t\r\n] -> skip ; // Skip whitespace
 // END: lex
-

@@ -1,5 +1,5 @@
 
-// Generated from Graphics.g by ANTLR 4.13.0
+// Generated from Graphics.g4 by ANTLR 4.13.0
 
 
 #include "GraphicsListener.h"
@@ -100,7 +100,7 @@ const atn::ATN& GraphicsParser::getATN() const {
 }
 
 std::string GraphicsParser::getGrammarFileName() const {
-  return "Graphics.g";
+  return "Graphics.g4";
 }
 
 const std::vector<std::string>& GraphicsParser::getRuleNames() const {

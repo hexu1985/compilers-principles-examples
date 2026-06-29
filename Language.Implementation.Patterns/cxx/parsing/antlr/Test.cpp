@@ -6,25 +6,25 @@
 
 using namespace antlr4;
 
+std::unique_ptr<ANTLRFileStream> makeANTLRFileStream(const std::string& fileName) {
+    auto input = std::make_unique<ANTLRFileStream>();
+    input->loadFromFile(fileName);
+    return input;
+}
+
 int main(int argc, const char* argv[]) {
-    std::ifstream stream;
-    std::unique_ptr<ANTLRInputStream> input;  // 如果从文件
+    std::string inputFile;
     if (argc > 1) {
-        stream.open(argv[1]);
-        if (!stream.is_open()) {
-            std::cerr << "Cannot open file: " << argv[1] << std::endl;
-            return 1;
-        }
-        input = std::make_unique<ANTLRInputStream>(stream);
+        inputFile = argv[1];
+    }
+
+    std::unique_ptr<ANTLRInputStream> input;
+    if (!inputFile.empty()) {
+        input = makeANTLRFileStream(inputFile);
     } else {
-        // 从标准输入读取
         input = std::make_unique<ANTLRInputStream>(std::cin);
     }
-    
-    // 使用文件或字符串构造输入流
-    //ANTLRInputStream input(stream);  // 如果从文件
-    // 或者 ANTLRInputStream input(content);  // 如果从 stdin
-    
+
     GraphicsLexer lexer(input.get());
     CommonTokenStream tokens(&lexer);
     GraphicsParser parser(&tokens);

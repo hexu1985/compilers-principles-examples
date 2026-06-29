@@ -9,30 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message( STATUS "CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}" )
 message( STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}" )
 
-include_directories( ${ANTLR4_DIR}/include/antlr4-runtime )
+include_directories( ${ANTLR4_DIR}/include/antlr4-runtime ${CMAKE_CURRENT_SOURCE_DIR}/gen )
 link_directories( ${ANTLR4_DIR}/lib )
 
-### test datafile
-set(DATAFILES box box.error)
+file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.h)
 
-foreach(datafile ${DATAFILES})
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${datafile}
-        #COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_SOURCE_DIR}/${datafile}
-                ${CMAKE_CURRENT_BINARY_DIR}/${datafile}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${datafile}
-        COMMENT "Copying test datafile ${datafile}"
-    )
-endforeach()
-
-add_custom_target(copy_datafiles ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/box
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/box.error
-)
-
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-add_executable( Test ${SOURCES} )
+add_executable( Test Test.cpp ${GEN_SOURCES} )
 target_link_libraries( Test antlr4-runtime )
-add_dependencies( Test copy_datafiles )
+

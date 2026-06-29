@@ -1,5 +1,5 @@
 
-// Generated from Graphics.g by ANTLR 4.13.0
+// Generated from Graphics.g4 by ANTLR 4.13.0
 
 #pragma once
 
