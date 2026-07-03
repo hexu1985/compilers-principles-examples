@@ -21,59 +21,71 @@ public:
         return visitChildren(ctx);
     }
 
+    // 处理 Assign 标签
     virtual std::any visitAssign(VecMathParser::AssignContext* ctx) override {
-        print(ctx->ID()->getText() + " = ");
+        print(ctx->ID()->getText() + "=");
         visit(ctx->expr());
-        print("\n");
+        std::cout << std::endl;
         return nullptr;
     }
 
+    // 处理 Print 标签
     virtual std::any visitPrint(VecMathParser::PrintContext* ctx) override {
         print("print ");
         visit(ctx->expr());
-        print("\n");
+        std::cout << std::endl;
         return nullptr;
     }
 
-    virtual std::any visitAdd(VecMathParser::AddContext* ctx) override {
-        visit(ctx->expr(0));
-        print("+");
-        visit(ctx->expr(1));
-        return nullptr;
-    }
-
-    virtual std::any visitMul(VecMathParser::MulContext* ctx) override {
-        visit(ctx->expr(0));
-        print("*");
-        visit(ctx->expr(1));
-        return nullptr;
-    }
-
-    virtual std::any visitDot(VecMathParser::DotContext* ctx) override {
-        visit(ctx->expr(0));
-        print(".");
-        visit(ctx->expr(1));
-        return nullptr;
-    }
-
-    virtual std::any visitVector(VecMathParser::VectorContext* ctx) override {
-        print("[");
-        auto exprs = ctx->expr();
-        for (size_t i = 0; i < exprs.size(); i++) {
-            if (i > 0) print(", ");
-            visit(exprs[i]);
+    // 处理表达式（通过检查子节点来处理操作符）
+    virtual std::any visitExpr(VecMathParser::ExprContext* ctx) override {
+        // children 包含 multExpr 和可能的 '+' 操作符
+        for (size_t i = 0; i < ctx->children.size(); i++) {
+            std::string text = ctx->children[i]->getText();
+            if (text == "+") {
+                print("+");
+            } else {
+                visit(ctx->children[i]);
+            }
         }
-        print("]");
         return nullptr;
     }
 
+    // 处理乘法表达式
+    virtual std::any visitMultExpr(VecMathParser::MultExprContext* ctx) override {
+        // children 包含 primary 和可能的 '*' 或 '.' 操作符
+        for (size_t i = 0; i < ctx->children.size(); i++) {
+            std::string text = ctx->children[i]->getText();
+            if (text == "*" || text == ".") {
+                print(text);
+            } else {
+                visit(ctx->children[i]);
+            }
+        }
+        return nullptr;
+    }
+
+    // 处理 Int 标签
     virtual std::any visitInt(VecMathParser::IntContext* ctx) override {
         print(ctx->INT()->getText());
         return nullptr;
     }
 
+    // 处理 Id 标签
     virtual std::any visitId(VecMathParser::IdContext* ctx) override {
         print(ctx->ID()->getText());
+        return nullptr;
+    }
+
+    // 处理 Vector 标签
+    virtual std::any visitVector(VecMathParser::VectorContext* ctx) override {
+        print("[");
+        auto exprs = ctx->expr();
+        for (size_t i = 0; i < exprs.size(); i++) {
+            if (i > 0) print(",");
+            visit(exprs[i]);
+        }
+        print("]");
         return nullptr;
     }
 };
