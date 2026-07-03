@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "antlr4-runtime.h"
 #include "VecMathLexer.h"
