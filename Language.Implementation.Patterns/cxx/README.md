@@ -20,3 +20,7 @@
 - [模式十三 外部访问者](walking/visitor)
 - [模式十四 文法树](walking/tree-grammar)
 - [模式十五 模式匹配器](walking/patterns)
+
+### 第6章 记录并识别程序中的符号
+- [模式十六 单作用域符号表](symtab/monolithic)
+
