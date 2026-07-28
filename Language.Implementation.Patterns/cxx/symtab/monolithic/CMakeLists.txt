@@ -25,3 +25,6 @@ file(GLOB GEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp ${CMAKE_CURRENT_SOUR
 
 add_executable( TestCymbolListener TestCymbolListener.cpp ${GEN_SOURCES} )
 target_link_libraries( TestCymbolListener antlr4-runtime )
+
+add_executable( TestCymbolVisitor TestCymbolVisitor.cpp ${GEN_SOURCES} )
+target_link_libraries( TestCymbolVisitor antlr4-runtime )
