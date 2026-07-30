@@ -13,7 +13,8 @@ class  CymbolLexer : public antlr4::Lexer {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    ID = 8, INT = 9, WS = 10, SL_COMMENT = 11
+    T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, ID = 13, INT = 14, 
+    WS = 15, SL_COMMENT = 16
   };
 
   explicit CymbolLexer(antlr4::CharStream *input);

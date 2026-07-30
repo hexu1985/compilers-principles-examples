@@ -1,14 +1,27 @@
 grammar Cymbol;
 
-// 起始规则：至少一个变量声明
+// 解析器规则
 compilationUnit
-    :   varDeclaration+
+    :   (methodDeclaration | varDeclaration)+
     ;
 
-// 类型规则
-type
-    :   'float'
+// 方法声明 - ANTLR4不再使用^()重写语法，而是使用标签
+methodDeclaration
+    :   type ID '(' formalParameters? ')' block
+    ;
+
+formalParameters
+    :   type ID (',' type ID)*
+    ;
+
+type:   'float'
     |   'int'
+    |   'void'
+    ;
+
+// 代码块
+block
+    :   '{' statement* '}'
     ;
 
 // 变量声明
@@ -16,19 +29,42 @@ varDeclaration
     :   type ID ('=' expression)? ';'
     ;
 
-// 表达式
-expression
-    :   primary ('+' primary)*
+statement
+    :   block
+    |   varDeclaration
+    |   'return' expression? ';'
+    |   postfixExpression
+        (   '=' expression
+        |
+        )
+        ';'       
     ;
 
-// 基本表达式
+expressionList
+    :   expression (',' expression)*
+    |
+    ;
+
+expression
+    :   addExpression
+    ;
+
+addExpression
+    :   postfixExpression ( '+' postfixExpression )*
+    ;
+
+// 函数调用
+postfixExpression
+    :   primary ( '(' expressionList ')' )*
+    ;
+
 primary
     :   ID
     |   INT
     |   '(' expression ')'
     ;
 
-// 词法规则
+// 词法分析器规则
 
 ID  :   LETTER (LETTER | [0-9])*
     ;
@@ -40,9 +76,9 @@ LETTER  :   [a-zA-Z]
 INT :   [0-9]+
     ;
 
-WS  :   [ \t\r\n]+ -> skip
+WS  :   [ \r\t\n]+ -> skip
     ;
 
 SL_COMMENT
-    :   '//' ~[\r\n]* -> skip
+    :   '//' ~[\r\n]* '\r'? '\n' -> skip
     ;

@@ -19,7 +19,19 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitMethodDeclaration(CymbolParser::MethodDeclarationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFormalParameters(CymbolParser::FormalParametersContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitType(CymbolParser::TypeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitBlock(CymbolParser::BlockContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -27,7 +39,23 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitStatement(CymbolParser::StatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExpressionList(CymbolParser::ExpressionListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitExpression(CymbolParser::ExpressionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitAddExpression(CymbolParser::AddExpressionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPostfixExpression(CymbolParser::PostfixExpressionContext *ctx) override {
     return visitChildren(ctx);
   }
 

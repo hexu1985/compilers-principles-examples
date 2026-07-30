@@ -17,14 +17,35 @@ public:
   virtual void enterCompilationUnit(CymbolParser::CompilationUnitContext *ctx) = 0;
   virtual void exitCompilationUnit(CymbolParser::CompilationUnitContext *ctx) = 0;
 
+  virtual void enterMethodDeclaration(CymbolParser::MethodDeclarationContext *ctx) = 0;
+  virtual void exitMethodDeclaration(CymbolParser::MethodDeclarationContext *ctx) = 0;
+
+  virtual void enterFormalParameters(CymbolParser::FormalParametersContext *ctx) = 0;
+  virtual void exitFormalParameters(CymbolParser::FormalParametersContext *ctx) = 0;
+
   virtual void enterType(CymbolParser::TypeContext *ctx) = 0;
   virtual void exitType(CymbolParser::TypeContext *ctx) = 0;
+
+  virtual void enterBlock(CymbolParser::BlockContext *ctx) = 0;
+  virtual void exitBlock(CymbolParser::BlockContext *ctx) = 0;
 
   virtual void enterVarDeclaration(CymbolParser::VarDeclarationContext *ctx) = 0;
   virtual void exitVarDeclaration(CymbolParser::VarDeclarationContext *ctx) = 0;
 
+  virtual void enterStatement(CymbolParser::StatementContext *ctx) = 0;
+  virtual void exitStatement(CymbolParser::StatementContext *ctx) = 0;
+
+  virtual void enterExpressionList(CymbolParser::ExpressionListContext *ctx) = 0;
+  virtual void exitExpressionList(CymbolParser::ExpressionListContext *ctx) = 0;
+
   virtual void enterExpression(CymbolParser::ExpressionContext *ctx) = 0;
   virtual void exitExpression(CymbolParser::ExpressionContext *ctx) = 0;
+
+  virtual void enterAddExpression(CymbolParser::AddExpressionContext *ctx) = 0;
+  virtual void exitAddExpression(CymbolParser::AddExpressionContext *ctx) = 0;
+
+  virtual void enterPostfixExpression(CymbolParser::PostfixExpressionContext *ctx) = 0;
+  virtual void exitPostfixExpression(CymbolParser::PostfixExpressionContext *ctx) = 0;
 
   virtual void enterPrimary(CymbolParser::PrimaryContext *ctx) = 0;
   virtual void exitPrimary(CymbolParser::PrimaryContext *ctx) = 0;
