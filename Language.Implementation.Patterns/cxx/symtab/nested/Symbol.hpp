@@ -4,11 +4,13 @@
 #include <memory>
 
 #include "Type.hpp"
+#include "Scope.hpp"
 
 class Symbol { // A generic programming language symbol
 protected:
     std::string name;      // All symbols at least have a name
     Type* type = nullptr;
+    Scope* scope = nullptr;
     
 public:
     Symbol(const std::string& name) : name(name), type(nullptr) {}
