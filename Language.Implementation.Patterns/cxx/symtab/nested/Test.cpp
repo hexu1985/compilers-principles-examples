@@ -10,7 +10,7 @@
 #include "antlr4-runtime.h"
 #include "CymbolLexer.h"
 #include "CymbolParser.h"
-#include "DefRefPhase.h"
+#include "DefRefPhase.hpp"
 
 #include "SymbolTable.hpp"
 #include "VariableSymbol.hpp"
@@ -49,9 +49,9 @@ int main(int argc, char* argv[]) {
     tree::ParseTreeWalker walker;
     SymbolTable symtab;
     DefRefPhase defRef{&symtab};
-    walker.walk(&listener, tree);
+    walker.walk(&defRef, tree);
 
-    std::cout << "globals: " << globals.toString() << std::endl;
+    std::cout << "globals: " << symtab.globals->toString() << std::endl;
 
     return 0;
 }

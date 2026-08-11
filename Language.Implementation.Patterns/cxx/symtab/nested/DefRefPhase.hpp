@@ -7,6 +7,7 @@
 #include "Symbol.hpp"
 #include "VariableSymbol.hpp"
 #include "MethodSymbol.hpp"
+#include "LocalScope.hpp"
 
 #include <iostream>
 #include <stack>
@@ -18,7 +19,32 @@ private:
     SymbolTable* symtab=nullptr;
     Scope* currentScope=nullptr;
     std::stack<Scope*> scopeStack;
+
+    // Helper to check if postfixExpression has any suffixes
+    bool hasSuffixes(CymbolParser::PostfixExpressionContext* ctx) {
+        // In C++ ANTLR4 runtime, we need to check the children directly
+        // postfixExpression: primary postfixExpressionSuffix*
+        // So if we have more than 1 child, it means we have suffixes
+        return ctx->children.size() > 1;
+    }
     
+    // Helper to get expression from statement context
+    CymbolParser::ExpressionContext* getExpression(CymbolParser::StatementContext* ctx) {
+        // In C++ runtime, expression() returns the first expression context
+        // Since statement has multiple alternatives, we need to check which one matches
+        if (ctx->expression()) {
+            return ctx->expression();
+        }
+        // For assignment: expression '=' expression ';'
+        // The left expression is the first one
+        for (auto* child : ctx->children) {
+            if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
+                return expr;
+            }
+        }
+        return nullptr;        
+    }
+
     Type* getType(CymbolParser::TypeContext* ctx) {
         std::string typeName = ctx->getText();
         Type* tsym = dynamic_cast<Type*>(currentScope->resolve(typeName));
@@ -26,19 +52,24 @@ private:
     }
 
     void handleAssignment(CymbolParser::ExpressionContext* expr) {
-        // Check if this is an ID assignment
-        if (expr->children.size() == 1) {
-            CymbolParser::AddExpressionContext* addExpr = expr->addExpression();
-            if (addExpr->children.size() == 1) {
-                CymbolParser::PostfixExpressionContext* postExpr = addExpr->postfixExpression(0);
-                if (postExpr->postfixExpressionSuffix().size() == 0) {
-                    CymbolParser::PrimaryContext* primary = postExpr->primary();
-                    if (primary->ID() != nullptr) {
+        // Navigate through the expression tree to find the ID
+        // expression: addExpression
+        if (expr->addExpression()) {
+            auto* addExpr = expr->addExpression();
+            // addExpression: postfixExpression ('+' postfixExpression)*
+            if (addExpr->postfixExpression().size() > 0) {
+                auto* postExpr = addExpr->postfixExpression(0);
+                // Check if it's a simple ID without function calls
+                if (!hasSuffixes(postExpr) && postExpr->primary()) {
+                    auto* primary = postExpr->primary();
+                    if (primary->ID()) {
                         antlr4::Token* id = primary->ID()->getSymbol();
                         VariableSymbol* vs = dynamic_cast<VariableSymbol*>(
                             currentScope->resolve(id->getText())
                         );
-                        std::cout << "line " << id->getLine() << ": assign to " << vs << std::endl;
+                        if (vs) {
+                            std::cout << "line " << id->getLine() << ": assign to " << vs << std::endl;
+                        }
                     }
                 }
             }
@@ -46,17 +77,20 @@ private:
     }
 
     void handleIdRef(CymbolParser::ExpressionContext* expr) {
-        // Check if this expression contains an ID reference
-        if (expr->children.size() == 1) {
-            CymbolParser::AddExpressionContext* addExpr = expr->addExpression();
-            if (addExpr->children.size() == 1) {
-                CymbolParser::PostfixExpressionContext* postExpr = addExpr->postfixExpression(0);
-                if (postExpr->postfixExpressionSuffix().size() == 0) {
-                    CymbolParser::PrimaryContext* primary = postExpr->primary();
-                    if (primary->ID() != nullptr) {
+        // Navigate through the expression tree to find the ID reference
+        if (expr->addExpression()) {
+            auto* addExpr = expr->addExpression();
+            if (addExpr->postfixExpression().size() > 0) {
+                auto* postExpr = addExpr->postfixExpression(0);
+                // Only handle simple ID references, not function calls
+                if (!hasSuffixes(postExpr) && postExpr->primary()) {
+                    auto* primary = postExpr->primary();
+                    if (primary->ID()) {
                         antlr4::Token* id = primary->ID()->getSymbol();
                         Symbol* s = currentScope->resolve(id->getText());
-                        std::cout << "line " << id->getLine() << ": ref " << s << std::endl;
+                        if (s) {
+                            std::cout << "line " << id->getLine() << ": ref " << s << std::endl;
+                        }
                     }
                 }
             }
@@ -112,14 +146,31 @@ public:
     
     // R e s o l v e  I D s
     void exitStatement(CymbolParser::StatementContext* ctx) override {
-        // Handle assignment: expression '=' expression ';'
-        if (ctx->children.size() >= 3 && ctx->children[1]->getText() == "=") {
-            CymbolParser::ExpressionContext* leftExpr = ctx->expression(0);
-            handleAssignment(leftExpr);
+        // Handle different statement types based on the structure
+        // Check if this is an assignment: expression '=' expression ';'
+        bool isAssignment = false;
+        for (size_t i = 0; i < ctx->children.size(); i++) {
+            if (ctx->children[i]->getText() == "=") {
+                isAssignment = true;
+                break;
+            }
         }
-        // Handle idref: expression ';'
-        else if (ctx->children.size() == 2 && ctx->expression(0) != nullptr) {
-            handleIdRef(ctx->expression(0));
+
+        if (isAssignment && ctx->children.size() >= 3) {
+            // Find the left expression (first expression context in children)
+            for (auto* child : ctx->children) {
+                if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
+                    handleAssignment(expr);
+                    break;
+                }
+            }
+        }
+        // Handle expression statements: expression ';'
+        else if (!isAssignment) {
+            auto* expr = getExpression(ctx);
+            if (expr != nullptr) {
+                handleIdRef(expr);
+            }
         }
     }
 };

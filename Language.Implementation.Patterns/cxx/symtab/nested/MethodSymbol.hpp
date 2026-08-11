@@ -12,7 +12,7 @@ private:
     Scope* enclosingScope;
 
 public:
-    MethodSymbol(const std::string& name, Type retType, Scope* enclosingScope)
+    MethodSymbol(const std::string& name, Type* retType, Scope* enclosingScope)
         : Symbol(name, retType), enclosingScope(enclosingScope) {}
 
     // Scope interface implementation
