@@ -6,8 +6,8 @@
 #include "Type.hpp"
 #include "Scope.hpp"
 
-class Symbol { // A generic programming language symbol
-protected:
+class Symbol: public virtual Printable { // A generic programming language symbol
+public:
     std::string name;      // All symbols at least have a name
     Type* type = nullptr;
     Scope* scope = nullptr;
@@ -23,7 +23,7 @@ public:
 
     Type* getType() const { return type; }
     
-    std::string toString() const {
+    std::string toString() const override {
         if (type != nullptr) {
             return '<' + getName() + ":" + type->getName() + '>';
         }
