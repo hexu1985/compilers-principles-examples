@@ -11,6 +11,8 @@
 #include <iostream>
 #include <stack>
 
+using namespace antlr4;
+
 class DefRefPhase : public CymbolBaseListener {
 private:
     SymbolTable* symtab=nullptr;
