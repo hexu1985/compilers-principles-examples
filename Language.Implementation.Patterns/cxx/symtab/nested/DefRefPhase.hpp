@@ -68,7 +68,7 @@ private:
                             currentScope->resolve(id->getText())
                         );
                         if (vs) {
-                            std::cout << "line " << id->getLine() << ": assign to " << vs << std::endl;
+                            std::cout << "line " << id->getLine() << ": assign to " << vs->toString() << std::endl;
                         }
                     }
                 }
@@ -89,7 +89,7 @@ private:
                         antlr4::Token* id = primary->ID()->getSymbol();
                         Symbol* s = currentScope->resolve(id->getText());
                         if (s) {
-                            std::cout << "line " << id->getLine() << ": ref " << s << std::endl;
+                            std::cout << "line " << id->getLine() << ": ref " << s->toString() << std::endl;
                         }
                     }
                 }
@@ -117,7 +117,7 @@ public:
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
         // pop scope
-        std::cout << "locals: " << currentScope << std::endl;
+        std::cout << "locals: " << currentScope->toString() << std::endl;
         currentScope = currentScope->getEnclosingScope();
     }
     
@@ -133,7 +133,7 @@ public:
     }
 
     void exitMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
-        std::cout << "args: " << currentScope << std::endl;
+        std::cout << "args: " << currentScope->toString() << std::endl;
         currentScope = currentScope->getEnclosingScope(); // pop arg scope
     }
     
