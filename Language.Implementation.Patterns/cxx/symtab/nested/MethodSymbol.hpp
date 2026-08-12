@@ -15,6 +15,13 @@ public:
     MethodSymbol(const std::string& name, Type* retType, Scope* enclosingScope)
         : Symbol(name, retType), enclosingScope(enclosingScope) {}
 
+    ~MethodSymbol() {
+        for (auto& arg: orderedArgs) {
+            auto symbol = arg.second;
+            delete symbol;
+        }
+    }
+
     // Scope interface implementation
     Symbol* resolve(const std::string& name) override {
         auto it = orderedArgs.find(name);

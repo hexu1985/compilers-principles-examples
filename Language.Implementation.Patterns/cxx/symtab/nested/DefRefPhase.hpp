@@ -121,6 +121,29 @@ public:
         MethodSymbol* ms = new MethodSymbol(id->getText(), retType, currentScope);
         currentScope->define(ms); // def method in globals
         currentScope = ms;       // set current scope to method scope
+
+        // Process formal parameters - add them to method scope
+        if (ctx->formalParameters()) {
+            auto* params = ctx->formalParameters();
+            // formalParameters: type ID (',' type ID)*
+            auto types = params->type();
+            auto ids = params->ID();
+
+            // Each parameter consists of a type and an ID
+            for (size_t i = 0; i < types.size() && i < ids.size(); i++) {
+                antlr4::Token* paramId = ids[i]->getSymbol();
+                std::string paramName = paramId->getText();
+
+                // Get the type of this parameter
+                Type* paramType = getType(types[i]);
+
+                // Create and define the parameter symbol
+                VariableSymbol* vs = new VariableSymbol(paramName, paramType);
+                currentScope->define(vs);
+
+                std::cout << "line " << paramId->getLine() << ": def param " << paramName << std::endl;
+            }
+        }
     }
 
     void exitMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
