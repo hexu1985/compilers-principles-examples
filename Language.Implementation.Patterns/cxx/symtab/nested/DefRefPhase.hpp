@@ -10,7 +10,7 @@
 #include "LocalScope.hpp"
 
 #include <iostream>
-#include <stack>
+#include <vector>
 
 using namespace antlr4;
 
@@ -18,7 +18,7 @@ class DefRefPhase : public CymbolBaseListener {
 private:
     SymbolTable* symtab=nullptr;
     Scope* currentScope=nullptr;
-    std::stack<Scope*> scopeStack;
+    std::vector<Scope*> localScopeList;
 
     // Helper to check if postfixExpression has any suffixes
     bool hasSuffixes(CymbolParser::PostfixExpressionContext* ctx) {
@@ -101,13 +101,18 @@ public:
     DefRefPhase(SymbolTable* symtab): symtab(symtab), currentScope(symtab->globals) {
     }
 
-    ~DefRefPhase() = default;
+    ~DefRefPhase() {
+        for (auto localScope: localScopeList) {
+            delete localScope;
+        }
+        localScopeList.clear();
+    }
     
     // S C O P E S
     void enterBlock(CymbolParser::BlockContext* ctx) override {
         // push scope
-        scopeStack.push(currentScope);
         currentScope = new LocalScope(currentScope);
+        localScopeList.push_back(currentScope);
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
@@ -124,7 +129,6 @@ public:
         Type* retType = getType(ctx->type());
         MethodSymbol* ms = new MethodSymbol(id->getText(), retType, currentScope);
         currentScope->define(ms); // def method in globals
-        scopeStack.push(currentScope);
         currentScope = ms;       // set current scope to method scope
     }
 

@@ -15,7 +15,12 @@ public:
     BaseScope(Scope* enclosingScope = nullptr) 
         : enclosingScope(enclosingScope) {}
 
-    virtual ~BaseScope() = default;
+    ~BaseScope() override {
+        for (auto& item: symbols) {
+            auto symbol = item.second;
+            delete symbol;
+        }
+    }
 
     Symbol* resolve(const std::string& name) override {
         auto it = symbols.find(name);

@@ -22,4 +22,11 @@ public:
     SymbolTable(): globals(new GlobalScope) {
         initTypeSystem();
     }
+
+    ~SymbolTable() {
+        delete globals;
+    }
+
+    SymbolTable(const SymbolTable&)=delete;
+    const SymbolTable& operator =(const SymbolTable&)=delete;
 };
