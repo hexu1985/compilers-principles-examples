@@ -20,6 +20,14 @@ private:
     Scope* currentScope=nullptr;
     std::vector<Scope*> localScopeList;
 
+    // Helper to check if postfixExpression has any suffixes
+    bool hasSuffixes(CymbolParser::PostfixExpressionContext* ctx) {
+        // In C++ ANTLR4 runtime, we need to check the children directly
+        // postfixExpression: primary postfixExpressionSuffix*
+        // So if we have more than 1 child, it means we have suffixes
+        return ctx->children.size() > 1;
+    }
+
     bool isAssignment(CymbolParser::StatementContext* ctx) {
         // 检查是否是赋值语句：表达式 '=' 表达式
         if (ctx->expression() && ctx->children.size() >= 3) {
@@ -36,6 +44,46 @@ private:
         std::string typeName = ctx->getText();
         Type* tsym = dynamic_cast<Type*>(currentScope->resolve(typeName));
         return tsym;
+    }
+    
+    void handleAssignment(CymbolParser::PostfixExpressionContext* postExpr) {
+        // Check if it's a simple ID without function calls
+        if (!hasSuffixes(postExpr) && postExpr->primary()) {
+            auto* primary = postExpr->primary();
+            if (primary->ID()) {
+                antlr4::Token* id = primary->ID()->getSymbol();
+                VariableSymbol* vs = dynamic_cast<VariableSymbol*>(
+                    currentScope->resolve(id->getText())
+                );
+                if (vs) {
+                    std::cout << "line " << id->getLine() << ": assign to " << vs->toString() << std::endl;
+                }
+            }
+        }
+    }
+
+    void handleIdRef(CymbolParser::ExpressionContext* expr) {
+        // Navigate through the expression tree to find the ID reference
+        if (expr->addExpression()) {
+            auto* addExpr = expr->addExpression();
+            if (addExpr->postfixExpression().size() > 0) {
+                for (auto* postExpr : addExpr->postfixExpression()) {
+                    // Only handle simple ID references, not function calls
+                    if (!hasSuffixes(postExpr) && postExpr->primary()) {
+                        auto* primary = postExpr->primary();
+                        if (primary->ID()) {
+                            antlr4::Token* id = primary->ID()->getSymbol();
+                            Symbol* s = currentScope->resolve(id->getText());
+                            if (s) {
+                                std::cout << "line " << id->getLine() << ": ref " << s->toString() << std::endl;
+                            } else {
+                                std::cout << "line " << id->getLine() << ": ref null" << std::endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }        
     }
 
 public:
@@ -89,33 +137,31 @@ public:
         Type* tsym = getType(ctx->type());
         VariableSymbol* vs = new VariableSymbol(id->getText(), tsym);
         currentScope->define(vs);
+
+        for (auto* child : ctx->children) {
+            if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
+                handleIdRef(expr);
+            }
+        }
     }
     
     // R e s o l v e  I D s
     void enterStatement(CymbolParser::StatementContext* ctx) {
         if (isAssignment(ctx)) {
-            // 处理赋值语句
-            auto primary = ctx->expression()->addExpression()->postfixExpression()[0]->primary();
-            if (primary && primary->ID()) {
-                auto id = primary->ID()->getSymbol();
-                auto vs = dynamic_cast<VariableSymbol*>(currentScope->resolve(id->getText()));
-                
-                if (vs) {
-                    std::cout << "line " << id->getLine() << ": assign to " << vs->toString() << std::endl;
+            // Find the left expression (first expression context in children)
+            for (int i = ctx->children.size()-1; i >= 0; i--) {
+                auto* child = ctx->children[i];
+                if (auto* postExpr = dynamic_cast<CymbolParser::PostfixExpressionContext*>(child)) {
+                    handleAssignment(postExpr);
+                } else if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
+                    handleIdRef(expr);
                 }
             }
-        }
-    }
-
-    void enterPrimary(CymbolParser::PrimaryContext* ctx) {
-        if (ctx->ID()) {
-            auto id = ctx->ID()->getSymbol();
-            auto s = currentScope->resolve(id->getText());
-
-            if (s) {
-                std::cout << "line " << id->getLine() << ": ref " << s->toString() << std::endl;
-            } else {
-                std::cout << "line " << id->getLine() << ": ref null" << std::endl;
+        } else {
+            for (auto* child : ctx->children) {
+                if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
+                    handleIdRef(expr);
+                }
             }
         }
     }
