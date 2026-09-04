@@ -20,23 +20,21 @@ public:
         }
     }
 
-    std::unordered_map<std
-    virtual std::unordered_map<std::string, Symbol*>* getMembers() = 0;
-
-    std::string toString() const {
-        // Build argument list string
-        std::string args;
-        bool first = true;
-        for (const auto& pair : orderedArgs) {
-            if (!first) args += ", ";
-            args += pair.second->toString();
-            first = false;
-        }
-        return "method" + Symbol::toString() + ":[" + args + "]";
+    std::unordered_map<std::string, Symbol*>& getMembers() override {
+        return orderedArgs;
     }
 
-    // Accessor for orderedArgs if needed
-    const std::unordered_map<std::string, Symbol*>& getArguments() const {
-        return orderedArgs;
+    std::string toString() const {
+        std::string result = name + "(";
+        bool first = true;
+        for (const auto& arg : orderedArgs) {
+            if (!first) {
+                result += ",";
+            }
+            result += arg.first;
+            first = false;
+        }
+        result += ")";
+        return result;
     }
 };

@@ -33,8 +33,4 @@ public:
         }
         return s + getName();
     }
-
-    static std::string stripBrackets(const std::string& s) {
-        return s.substr(1, s.length() - 2);
-    }
 };
