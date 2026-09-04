@@ -1,19 +1,17 @@
 #pragma once
 
-#include "Symbol.hpp"
-#include "Scope.hpp"
+#include "ScopeSymbol.hpp"
 #include <unordered_map>
 #include <string>
 #include <vector>
 
-class MethodSymbol : public Symbol, public Scope {
+class MethodSymbol : public ScopeSymbol {
 private:
     std::unordered_map<std::string, Symbol*> orderedArgs;
-    Scope* enclosingScope;
 
 public:
-    MethodSymbol(const std::string& name, Type* retType, Scope* enclosingScope)
-        : Symbol(name, retType), enclosingScope(enclosingScope) {}
+    MethodSymbol(const std::string& name, Type* retType, Scope* parent)
+        : ScopeSymbol(name, retType, parent) {}
 
     ~MethodSymbol() {
         for (auto& arg: orderedArgs) {
@@ -22,31 +20,8 @@ public:
         }
     }
 
-    // Scope interface implementation
-    Symbol* resolve(const std::string& name) override {
-        auto it = orderedArgs.find(name);
-        if (it != orderedArgs.end()) {
-            return it->second;
-        }
-        // if not here, check any enclosing scope
-        if (getEnclosingScope() != nullptr) {
-            return getEnclosingScope()->resolve(name);
-        }
-        return nullptr; // not found
-    }
-
-    void define(Symbol* sym) override {
-        orderedArgs[sym->name] = sym;
-        sym->scope = this; // track the scope in each symbol
-    }
-
-    Scope* getEnclosingScope() const override { 
-        return enclosingScope; 
-    }
-
-    std::string getScopeName() const override { 
-        return name; 
-    }
+    std::unordered_map<std
+    virtual std::unordered_map<std::string, Symbol*>* getMembers() = 0;
 
     std::string toString() const {
         // Build argument list string

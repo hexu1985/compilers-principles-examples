@@ -12,8 +12,8 @@ protected:
     std::unordered_map<std::string, Symbol*> symbols;
 
 public:
-    BaseScope(Scope* enclosingScope = nullptr) 
-        : enclosingScope(enclosingScope) {}
+    BaseScope(Scope* parent = nullptr) 
+        : enclosingScope(parent) {}
 
     ~BaseScope() override {
         for (auto& item: symbols) {

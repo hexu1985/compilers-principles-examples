@@ -24,9 +24,17 @@ public:
     Type* getType() const { return type; }
     
     std::string toString() const override {
-        if (type != nullptr) {
-            return '<' + getName() + ":" + type->getName() + '>';
+        std::string s = "";
+        if (scope != nullptr) {
+            s = scope->getScopeName() + ".";
         }
-        return getName();
+        if (type != nullptr) {
+            return '<' + s + getName() + ":" + type->toString() + '>';
+        }
+        return s + getName();
+    }
+
+    static std::string stripBrackets(const std::string& s) {
+        return s.substr(1, s.length() - 2);
     }
 };
