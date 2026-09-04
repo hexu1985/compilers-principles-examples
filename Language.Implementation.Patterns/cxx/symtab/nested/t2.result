@@ -1,0 +1,12 @@
+line 2: def method f
+line 2: def param x
+line 4: def i
+line 5: def z
+line 5: ref <x:int>
+line 5: ref null
+line 5: ref <z:float>
+line 5: assign to <i:float>
+locals: [z]
+locals: [i]
+args: method<f:float>:[<x:int>]
+globals: [f, float, void, int]
