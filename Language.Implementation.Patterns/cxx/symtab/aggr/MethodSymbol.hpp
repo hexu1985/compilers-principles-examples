@@ -17,7 +17,18 @@ public:
         return orderedArgs;
     }
 
-    std::string toString() const {
+    std::string toString() const override {
+        std::string s = "";
+        if (scope != nullptr) {
+            s = scope->getScopeName() + ".";
+        }
+        if (type != nullptr) {
+            return '<' + s + getName() + ":" + type->getFullName() + '>';
+        }
+        return s + getName();
+    }
+
+    std::string getName() const {
         std::string result = name + "(";
         bool first = true;
         for (const auto& arg : orderedArgs) {
@@ -29,5 +40,5 @@ public:
         }
         result += ")";
         return result;
-    }
+    }  
 };
