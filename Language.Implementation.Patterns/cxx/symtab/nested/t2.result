@@ -9,4 +9,4 @@ line 5: assign to <i:float>
 locals: [z]
 locals: [i]
 args: method<f:float>:[<x:int>]
-globals: [f, float, void, int]
+globals: [int, float, void, f]

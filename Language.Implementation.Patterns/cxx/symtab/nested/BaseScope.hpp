@@ -2,14 +2,14 @@
 
 #include "Scope.hpp"
 #include "Symbol.hpp"
-#include <unordered_map>
+#include "tsl/ordered_map.h"
 #include <string>
 #include <vector>
 
 class BaseScope : public Scope {
 protected:
     Scope* enclosingScope=nullptr; // null if global (outermost) scope
-    std::unordered_map<std::string, Symbol*> symbols;
+    tsl::ordered_map<std::string, Symbol*> symbols;
 
 public:
     BaseScope(Scope* enclosingScope = nullptr) 
@@ -49,7 +49,7 @@ public:
     }
 
     // Provide access to the symbols map if needed
-    const std::unordered_map<std::string, Symbol*>& getSymbols() const {
+    const tsl::ordered_map<std::string, Symbol*>& getSymbols() const {
         return symbols;
     }
 };

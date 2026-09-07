@@ -2,13 +2,13 @@
 
 #include "Symbol.hpp"
 #include "Scope.hpp"
-#include <unordered_map>
+#include "tsl/ordered_map.h"
 #include <string>
 #include <vector>
 
 class MethodSymbol : public Symbol, public Scope {
 private:
-    std::unordered_map<std::string, Symbol*> orderedArgs;
+    tsl::ordered_map<std::string, Symbol*> orderedArgs;
     Scope* enclosingScope;
 
 public:
@@ -54,7 +54,7 @@ public:
     }
 
     // Accessor for orderedArgs if needed
-    const std::unordered_map<std::string, Symbol*>& getArguments() const {
+    const tsl::ordered_map<std::string, Symbol*>& getArguments() const {
         return orderedArgs;
     }
 };

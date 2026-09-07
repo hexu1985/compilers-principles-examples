@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
+#include <vector>
 #include "GlobalScope.hpp"
 #include "Symbol.hpp"
 #include "BuiltInTypeSymbol.hpp"
