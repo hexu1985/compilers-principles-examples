@@ -1,19 +1,19 @@
 #pragma once
 
 #include "ScopedSymbol.hpp"
-#include <unordered_map>
+#include "tsl/ordered_map.h"
 #include <string>
 #include <vector>
 
 class MethodSymbol : public ScopedSymbol {
 private:
-    std::unordered_map<std::string, Symbol*> orderedArgs;
+    tsl::ordered_map<std::string, Symbol*> orderedArgs;
 
 public:
     MethodSymbol(const std::string& name, Type* retType, Scope* parent)
         : ScopedSymbol(name, retType, parent) {}
 
-    std::unordered_map<std::string, Symbol*>& getMembers() override {
+    tsl::ordered_map<std::string, Symbol*>& getMembers() override {
         return orderedArgs;
     }
 

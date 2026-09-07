@@ -1,0 +1,12 @@
+line 2: def struct A
+line 3: def x
+line 4: def y
+fields: struct A:{x,y}
+line 6: def method f
+line 8: def a
+line 9: ref a=<local.a:struct A:{x,y}>
+line 9: ref A.x=<A.x:global.int>
+line 9: assign to type int
+locals: [a]
+args: <global.f():global.void>
+globals: [int, float, void, A, f]

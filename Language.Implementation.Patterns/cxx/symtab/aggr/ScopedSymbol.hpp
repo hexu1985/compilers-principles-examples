@@ -2,8 +2,8 @@
 
 #include "Symbol.hpp"
 #include "Scope.hpp"
+#include "tsl/ordered_map.h"
 #include <string>
-#include <unordered_map>
 #include <memory>
 
 class ScopedSymbol : public Symbol, public Scope {
@@ -49,5 +49,5 @@ public:
     /** Indicate how subclasses store scope members. Allows us to
      *  factor out common code in this class.
      */
-    virtual std::unordered_map<std::string, Symbol*>& getMembers() = 0;
+    virtual tsl::ordered_map<std::string, Symbol*>& getMembers() = 0;
 };

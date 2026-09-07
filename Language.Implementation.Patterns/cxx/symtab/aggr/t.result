@@ -1,0 +1,26 @@
+line 2: def struct A
+line 3: def x
+line 4: def struct B
+line 4: def y
+fields: struct B:{y}
+line 5: def b
+line 6: def struct C
+line 6: def z
+fields: struct C:{z}
+line 7: def c
+fields: struct A:{x,B,b,C,c}
+line 9: def a
+line 11: def method f
+line 13: def struct D
+line 14: def i
+fields: struct D:{i}
+line 16: def d
+line 17: ref a=<global.a:struct A:{x,B,b,C,c}>
+line 17: ref A.b=<A.b:struct B:{y}>
+line 17: ref A.b.y=<B.y:global.int>
+line 17: ref d=<local.d:struct D:{i}>
+line 17: ref D.i=<D.i:global.int>
+line 17: assign to type int
+locals: [D, d]
+args: <global.f():global.void>
+globals: [int, float, void, A, a, f]

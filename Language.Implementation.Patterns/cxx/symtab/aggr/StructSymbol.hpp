@@ -2,13 +2,13 @@
 
 #include "ScopedSymbol.hpp"
 #include "Type.hpp"
-#include <unordered_map>
+#include "tsl/ordered_map.h"
 #include <string>
 #include <vector>
 
 class StructSymbol : public ScopedSymbol, public Type {
 private:
-    std::unordered_map<std::string, Symbol*> fields;
+    tsl::ordered_map<std::string, Symbol*> fields;
 
 public:
     StructSymbol(const std::string& name, Scope* parent) 
@@ -23,7 +23,7 @@ public:
         return nullptr;
     }
 
-    std::unordered_map<std::string, Symbol*>& getMembers() override {
+    tsl::ordered_map<std::string, Symbol*>& getMembers() override {
         return fields;
     }
 
