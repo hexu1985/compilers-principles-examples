@@ -27,12 +27,9 @@ public:
         return fields;
     }
 
+    // 实现Type接口的纯虚函数
     std::string getName() const override {
-        return name;
-    }
-
-    std::string getFullName() const override {
-        return toString();
+        return Symbol::getSymbolName();
     }
 
     std::string toString() const override {

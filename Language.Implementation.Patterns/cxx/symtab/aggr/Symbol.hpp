@@ -19,7 +19,7 @@ public:
 
     virtual ~Symbol() = default;
 
-    std::string getName() const { return name; }
+    virtual std::string getSymbolName() const { return name; }
 
     Type* getType() const { return type; }
     
@@ -29,8 +29,8 @@ public:
             s = scope->getScopeName() + ".";
         }
         if (type != nullptr) {
-            return '<' + s + getName() + ":" + type->getFullName() + '>';
+            return '<' + s + getSymbolName() + ":" + type->toString() + '>';
         }
-        return s + getName();
+        return s + getSymbolName();
     }
 };

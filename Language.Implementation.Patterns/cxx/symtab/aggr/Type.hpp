@@ -2,12 +2,9 @@
 
 #include <string>
 
-class Type {
+class Type: public virtual Printable {
 public:
     virtual ~Type() = default;
     virtual std::string getName() const = 0;  // 纯虚函数，相当于Java的抽象方法
-    virtual std::string getFullName() const {
-        return getName();
-    }
 };
 
