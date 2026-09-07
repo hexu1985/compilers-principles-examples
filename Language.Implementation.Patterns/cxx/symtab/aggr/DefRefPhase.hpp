@@ -209,6 +209,24 @@ public:
     }
     // END: struct
 
+    // 新增：处理结构体成员
+    void enterStructMember(CymbolParser::StructMemberContext* ctx) override {
+        // 处理字段声明: type ID ';'
+        if (ctx->type() && ctx->ID()) {
+            antlr4::Token* id = ctx->ID()->getSymbol();
+            Type* tsym = getType(ctx->type());
+            
+            if (tsym) {
+                auto* vs = new VariableSymbol(id->getText(), tsym);
+                symbolList.push_back(vs);
+                currentScope->define(vs);
+                
+                std::cout << "line " << id->getLine() << ": def " << id->getText() << std::endl;
+            }
+        }
+        // 如果是嵌套的结构体声明，会由 enterStructDeclaration 处理
+    }
+
     void enterMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
         if (!ctx->ID()) return;
 
@@ -252,23 +270,17 @@ public:
         if (!ctx->ID()) return;
         
         antlr4::Token* id = ctx->ID()->getSymbol();
-        
-        // Check if this is a struct field declaration
-        bool isFieldDecl = !inStructScope.empty() && inStructScope.top();
-        
         std::cout << "line " << id->getLine() << ": def " << id->getText() << std::endl;
-    
+
         Type* tsym = getType(ctx->type());
         auto* vs = new VariableSymbol(id->getText(), tsym);
         symbolList.push_back(vs);
         currentScope->define(vs);
 
         // Handle initializer expression if present
-        if (!isFieldDecl) {
-            for (auto* child : ctx->children) {
-                if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
-                    resolveExpression(expr);
-                }
+        for (auto* child : ctx->children) {
+            if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
+                resolveExpression(expr);
             }
         }
     }
