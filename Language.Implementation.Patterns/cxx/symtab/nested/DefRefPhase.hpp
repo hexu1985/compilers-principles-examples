@@ -18,7 +18,8 @@ class DefRefPhase : public CymbolBaseListener {
 private:
     SymbolTable* symtab=nullptr;
     Scope* currentScope=nullptr;
-    std::vector<Scope*> localScopeList;
+    std::vector<Scope*> scopeList;
+    std::vector<Symbol*> symbolList;  // Track all created symbols for cleanup
 
     // Helper to check if postfixExpression has any suffixes (function calls or field access)
     bool hasSuffixes(CymbolParser::PostfixExpressionContext* ctx) {
@@ -99,10 +100,16 @@ public:
 
     ~DefRefPhase() {
         // Clean up dynamically allocated scopes
-        for (auto* scope : localScopeList) {
+        for (auto* scope : scopeList) {
             delete scope;
         }
-        localScopeList.clear();
+        scopeList.clear();
+
+        // Clean up dynamically allocated symbols
+        for (auto* sym : symbolList) {
+            delete sym;
+        }
+        symbolList.clear();
     }
     
     // S C O P E S
@@ -110,7 +117,7 @@ public:
         // Push scope
         auto* localScope = new LocalScope(currentScope);
         currentScope = localScope;
-        localScopeList.push_back(localScope);
+        scopeList.push_back(localScope);
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
@@ -127,6 +134,7 @@ public:
     
         Type* retType = getType(ctx->type());
         auto* ms = new MethodSymbol(id->getText(), retType, currentScope);
+        symbolList.push_back(ms);
         currentScope->define(ms); // Define method in current scope
         currentScope = ms;       // Set current scope to method scope
 
@@ -142,6 +150,7 @@ public:
                 Type* paramType = getType(types[i]);
 
                 auto* vs = new VariableSymbol(paramName, paramType);
+                symbolList.push_back(vs);
                 currentScope->define(vs);
 
                 std::cout << "line " << paramId->getLine() << ": def " << paramName << std::endl;
@@ -163,6 +172,7 @@ public:
     
         Type* tsym = getType(ctx->type());
         auto* vs = new VariableSymbol(id->getText(), tsym);
+        symbolList.push_back(vs);
         currentScope->define(vs);
 
         // Handle initializer expression if present

@@ -13,14 +13,7 @@ protected:
 
 public:
     BaseScope(Scope* enclosingScope = nullptr) 
-        : enclosingScope(enclosingScope) {}
-
-    ~BaseScope() override {
-        for (auto& item: symbols) {
-            auto symbol = item.second;
-            delete symbol;
-        }
-    }
+        : enclosingScope(enclosingScope) {} 
 
     Symbol* resolve(const std::string& name) override {
         auto it = symbols.find(name);
