@@ -1,5 +1,5 @@
 line 2: def method f
-line 2: def param x
+line 2: def x
 line 4: def i
 line 6: def z
 line 6: ref <x:int>

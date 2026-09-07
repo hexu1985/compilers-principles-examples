@@ -20,17 +20,16 @@ private:
     Scope* currentScope=nullptr;
     std::vector<Scope*> localScopeList;
 
-    // Helper to check if postfixExpression has any suffixes
+    // Helper to check if postfixExpression has any suffixes (function calls or field access)
     bool hasSuffixes(CymbolParser::PostfixExpressionContext* ctx) {
-        // In C++ ANTLR4 runtime, we need to check the children directly
-        // postfixExpression: primary postfixExpressionSuffix*
-        // So if we have more than 1 child, it means we have suffixes
+        // postfixExpression: primary ( '(' expressionList ')' | '.' ID )*
+        // If there are more than 1 direct children besides primary, there are suffixes
         return ctx->children.size() > 1;
     }
 
     bool isAssignment(CymbolParser::StatementContext* ctx) {
-        // 检查是否是赋值语句：表达式 '=' 表达式
-        if (ctx->expression() && ctx->children.size() >= 3) {
+        // Check if it's an assignment: postfixExpression '=' expression
+        if (ctx->postfixExpression() && ctx->expression()) {
             for (size_t i = 0; i < ctx->children.size(); i++) {
                 if (ctx->children[i]->getText() == "=") {
                     return true;
@@ -43,18 +42,22 @@ private:
     Type* getType(CymbolParser::TypeContext* ctx) {
         std::string typeName = ctx->getText();
         Type* tsym = dynamic_cast<Type*>(currentScope->resolve(typeName));
+        if (!tsym) {
+            std::cerr << "Warning: Cannot resolve type '" << typeName << "' at line " 
+                      << ctx->getStart()->getLine() << std::endl;
+        }
         return tsym;
     }
     
+    // Handle assignment: ^('=' ID .)
     void handleAssignment(CymbolParser::PostfixExpressionContext* postExpr) {
-        // Check if it's a simple ID without function calls
+        // Only handle simple variable assignments (not field access or function calls)
         if (!hasSuffixes(postExpr) && postExpr->primary()) {
             auto* primary = postExpr->primary();
             if (primary->ID()) {
                 antlr4::Token* id = primary->ID()->getSymbol();
-                VariableSymbol* vs = dynamic_cast<VariableSymbol*>(
-                    currentScope->resolve(id->getText())
-                );
+                Symbol* sym = currentScope->resolve(id->getText());
+                VariableSymbol* vs = dynamic_cast<VariableSymbol*>(sym);
                 if (vs) {
                     std::cout << "line " << id->getLine() << ": assign to " << vs->toString() << std::endl;
                 }
@@ -62,50 +65,56 @@ private:
         }
     }
 
+    // Handle ID reference: {$start.hasAncestor(EXPR)}? ID
     void handleIdRef(CymbolParser::ExpressionContext* expr) {
-        // Navigate through the expression tree to find the ID reference
         if (expr->addExpression()) {
             auto* addExpr = expr->addExpression();
-            if (addExpr->postfixExpression().size() > 0) {
-                for (auto* postExpr : addExpr->postfixExpression()) {
-                    // Only handle simple ID references, not function calls
-                    if (!hasSuffixes(postExpr) && postExpr->primary()) {
-                        auto* primary = postExpr->primary();
-                        if (primary->ID()) {
-                            antlr4::Token* id = primary->ID()->getSymbol();
-                            Symbol* s = currentScope->resolve(id->getText());
-                            if (s) {
-                                std::cout << "line " << id->getLine() << ": ref " << s->toString() << std::endl;
-                            } else {
-                                std::cout << "line " << id->getLine() << ": ref null" << std::endl;
-                            }
-                        }
-                    }
-                }
+            for (auto* postExpr : addExpr->postfixExpression()) {
+                handlePostfixExpressionIdRef(postExpr);
             }
-        }        
+        }
+    }
+
+    // Handle ID reference in postfixExpression
+    void handlePostfixExpressionIdRef(CymbolParser::PostfixExpressionContext* postExpr) {
+        if (!postExpr->primary()) return;
+        
+        auto* primary = postExpr->primary();
+        
+        // Simple ID reference
+        if (!hasSuffixes(postExpr) && primary->ID()) {
+            antlr4::Token* id = primary->ID()->getSymbol();
+            Symbol* s = currentScope->resolve(id->getText());
+            if (s) {
+                std::cout << "line " << id->getLine() << ": ref " << s->toString() << std::endl;
+            } else {
+                std::cout << "line " << id->getLine() << ": ref null" << std::endl;
+            }
+        }
     }
 
 public:
-    DefRefPhase(SymbolTable* symtab): symtab(symtab), currentScope(symtab->globals) {
+    DefRefPhase(SymbolTable* symtab) : symtab(symtab), currentScope(symtab->globals) {
     }
 
     ~DefRefPhase() {
-        for (auto localScope: localScopeList) {
-            delete localScope;
+        // Clean up dynamically allocated scopes
+        for (auto* scope : localScopeList) {
+            delete scope;
         }
         localScopeList.clear();
     }
     
     // S C O P E S
     void enterBlock(CymbolParser::BlockContext* ctx) override {
-        // push scope
-        currentScope = new LocalScope(currentScope);
-        localScopeList.push_back(currentScope);
+        // Push scope
+        auto* localScope = new LocalScope(currentScope);
+        currentScope = localScope;
+        localScopeList.push_back(localScope);
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
-        // pop scope
+        // Pop scope
         std::cout << "locals: " << currentScope->toString() << std::endl;
         currentScope = currentScope->getEnclosingScope();
     }
@@ -113,35 +122,29 @@ public:
     void enterMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
         if (!ctx->ID()) return;
 
-        // match method with 0-or-more args
         antlr4::Token* id = ctx->ID()->getSymbol();
         std::cout << "line " << id->getLine() << ": def method " << id->getText() << std::endl;
     
         Type* retType = getType(ctx->type());
-        MethodSymbol* ms = new MethodSymbol(id->getText(), retType, currentScope);
-        currentScope->define(ms); // def method in globals
-        currentScope = ms;       // set current scope to method scope
+        auto* ms = new MethodSymbol(id->getText(), retType, currentScope);
+        currentScope->define(ms); // Define method in current scope
+        currentScope = ms;       // Set current scope to method scope
 
-        // Process formal parameters - add them to method scope
+        // Process formal parameters
         if (ctx->formalParameters()) {
             auto* params = ctx->formalParameters();
-            // formalParameters: type ID (',' type ID)*
             auto types = params->type();
             auto ids = params->ID();
 
-            // Each parameter consists of a type and an ID
             for (size_t i = 0; i < types.size() && i < ids.size(); i++) {
                 antlr4::Token* paramId = ids[i]->getSymbol();
                 std::string paramName = paramId->getText();
-
-                // Get the type of this parameter
                 Type* paramType = getType(types[i]);
 
-                // Create and define the parameter symbol
-                VariableSymbol* vs = new VariableSymbol(paramName, paramType);
+                auto* vs = new VariableSymbol(paramName, paramType);
                 currentScope->define(vs);
 
-                std::cout << "line " << paramId->getLine() << ": def param " << paramName << std::endl;
+                std::cout << "line " << paramId->getLine() << ": def " << paramName << std::endl;
             }
         }
     }
@@ -153,14 +156,16 @@ public:
     
     // D e f i n e  s y m b o l s
     void enterVarDeclaration(CymbolParser::VarDeclarationContext* ctx) override {
-        // global, parameter, or local variable
+        if (!ctx->ID()) return;
+        
         antlr4::Token* id = ctx->ID()->getSymbol();
         std::cout << "line " << id->getLine() << ": def " << id->getText() << std::endl;
     
         Type* tsym = getType(ctx->type());
-        VariableSymbol* vs = new VariableSymbol(id->getText(), tsym);
+        auto* vs = new VariableSymbol(id->getText(), tsym);
         currentScope->define(vs);
 
+        // Handle initializer expression if present
         for (auto* child : ctx->children) {
             if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
                 handleIdRef(expr);
@@ -169,21 +174,25 @@ public:
     }
     
     // R e s o l v e  I D s
-    void enterStatement(CymbolParser::StatementContext* ctx) {
+    void enterStatement(CymbolParser::StatementContext* ctx) override {
         if (isAssignment(ctx)) {
-            // Find the left expression (first expression context in children)
-            for (int i = ctx->children.size()-1; i >= 0; i--) {
-                auto* child = ctx->children[i];
-                if (auto* postExpr = dynamic_cast<CymbolParser::PostfixExpressionContext*>(child)) {
-                    handleAssignment(postExpr);
-                } else if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
-                    handleIdRef(expr);
-                }
+            // Handle right-hand side expression
+            if (ctx->expression()) {
+                handleIdRef(ctx->expression());
+            }
+            // Handle assignment: postfixExpression '=' expression
+            if (ctx->postfixExpression()) {
+                handleAssignment(ctx->postfixExpression());
             }
         } else {
+            // Handle return statement
+            if (ctx->expression()) {
+                handleIdRef(ctx->expression());
+            }
+            // Handle other expressions in statement
             for (auto* child : ctx->children) {
-                if (auto* expr = dynamic_cast<CymbolParser::ExpressionContext*>(child)) {
-                    handleIdRef(expr);
+                if (auto* postExpr = dynamic_cast<CymbolParser::PostfixExpressionContext*>(child)) {
+                    handlePostfixExpressionIdRef(postExpr);
                 }
             }
         }

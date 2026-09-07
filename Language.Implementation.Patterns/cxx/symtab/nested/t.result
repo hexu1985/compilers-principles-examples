@@ -1,7 +1,7 @@
 line 2: def i
 line 3: def method f
-line 3: def param x
-line 3: def param y
+line 3: def x
+line 3: def y
 line 5: def i
 line 6: def z
 line 6: ref <x:int>
