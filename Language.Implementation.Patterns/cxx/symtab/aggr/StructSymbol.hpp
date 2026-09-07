@@ -31,6 +31,10 @@ public:
         return name;
     }
 
+    std::string getFullName() const override {
+        return toString();
+    }
+
     std::string toString() const override {
         std::string result = "struct " + name + ":{";
         bool first = true;

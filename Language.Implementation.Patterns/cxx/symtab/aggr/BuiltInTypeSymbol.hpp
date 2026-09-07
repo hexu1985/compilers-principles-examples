@@ -15,4 +15,12 @@ public:
     std::string getName() const override {
         return Symbol::getName();  // 使用Symbol的getName方法
     }
+
+    std::string getFullName() const override {
+        std::string s = "";
+        if (scope != nullptr) {
+            s = scope->getScopeName() + ".";
+        }
+        return s + getName();
+    }    
 };

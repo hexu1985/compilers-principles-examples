@@ -78,8 +78,10 @@ private:
             return nullptr;
         }
 
+        //std::cout << "resolveMember: " << postExpr->getText() << std::endl;
         antlr4::Token* firstId = postExpr->primary()->ID()->getSymbol();
         Symbol* s = currentScope->resolve(firstId->getText());
+        //std::cout << "s.getName(): " << s->getType()->getName() << std::endl;
         
         if (!s) {
             std::cout << "line " << firstId->getLine() << ": ref " 
@@ -93,7 +95,8 @@ private:
 
         // Process field accesses: .ID
         if (hasFieldAccess(postExpr)) {
-            std::string fullPath = firstId->getText();
+            //std::string fullPath = firstId->getText();
+            std::string fullPath = s->getType()->getName();
             
             for (size_t i = 0; i < postExpr->children.size(); i++) {
                 auto* child = postExpr->children[i];
