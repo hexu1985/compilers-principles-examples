@@ -17,7 +17,7 @@ public:
     ScopedSymbol(const std::string& name, Scope* enclosingScope)
         : Symbol(name), enclosingScope(enclosingScope) {}
 
-    Symbol* resolve(const std::string& name) {
+    Symbol* resolve(const std::string& name) override {
         auto s = getMembers().find(name);
         if (s != getMembers().end()) {
             return s->second;
@@ -33,16 +33,16 @@ public:
         return resolve(name);
     }
     
-    void define(Symbol* sym) {
+    void define(Symbol* sym) override {
         getMembers()[sym->name] = sym;
         sym->scope = this; // track the scope in each symbol
     }
 
-    Scope* getEnclosingScope() {
+    Scope* getEnclosingScope() const override {
         return enclosingScope;
     }
     
-    std::string getScopeName() {
+    std::string getScopeName() const override {
         return name;
     }
 
