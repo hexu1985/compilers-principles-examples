@@ -1,15 +1,15 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
 
+#include "tsl/ordered_map.h"
 #include "Scope.hpp"
 #include "Symbol.hpp"
 #include "BuiltInTypeSymbol.hpp"
 
 class SymbolTable : public Scope { // single-scope symtab
 private:
-    std::unordered_map<std::string, Symbol*> symbols;
+    tsl::ordered_map<std::string, Symbol*> symbols;
     
 protected:
     void initTypeSystem() {
