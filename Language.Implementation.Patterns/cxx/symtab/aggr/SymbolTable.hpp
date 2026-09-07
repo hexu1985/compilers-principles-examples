@@ -10,12 +10,17 @@
 class SymbolTable {
 public:
     GlobalScope* globals = nullptr;
+    std::vector<Symbol*> symbolList;  // Track all created symbols for cleanup
     
 protected:
     void initTypeSystem() {
-        globals->define(new BuiltInTypeSymbol("int"));
-        globals->define(new BuiltInTypeSymbol("float"));
-        globals->define(new BuiltInTypeSymbol("void")); // pseudo-type
+        symbolList.push_back(new BuiltInTypeSymbol("int"));
+        symbolList.push_back(new BuiltInTypeSymbol("float"));
+        symbolList.push_back(new BuiltInTypeSymbol("void"));    // pseudo-type
+
+        for (auto* sym: symbolList) {
+            globals->define(sym);
+        }
     }
     
 public:
@@ -24,6 +29,10 @@ public:
     }
 
     ~SymbolTable() {
+        for (auto* sym : symbolList) {
+            delete sym;
+        }
+        symbolList.clear();
         delete globals;
     }
 

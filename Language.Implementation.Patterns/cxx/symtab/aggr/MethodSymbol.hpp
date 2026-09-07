@@ -13,13 +13,6 @@ public:
     MethodSymbol(const std::string& name, Type* retType, Scope* parent)
         : ScopedSymbol(name, retType, parent) {}
 
-    ~MethodSymbol() {
-        for (auto& arg: orderedArgs) {
-            auto symbol = arg.second;
-            delete symbol;
-        }
-    }
-
     std::unordered_map<std::string, Symbol*>& getMembers() override {
         return orderedArgs;
     }

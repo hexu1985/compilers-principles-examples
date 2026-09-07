@@ -1,0 +1,26 @@
+line 2: def i
+line 3: def method f
+line 3: def x
+line 3: def y
+line 5: def i
+line 6: def z
+line 6: ref x=<f.x:int>
+line 6: ref y=<f.y:float>
+line 6: ref z=<local.z:float>
+line 6: ref i=<local.i:float>
+line 6: assign to type float
+locals: [z]
+line 7: def z
+line 7: ref i=<local.i:float>
+line 7: ref z=<local.z:float>
+line 7: ref i=<local.i:float>
+line 7: assign to type float
+locals: [z]
+line 8: ref i=<local.i:float>
+locals: [i]
+args: f(y,x)
+line 10: def method g
+line 12: ref f=f(y,x)
+locals: []
+args: g()
+globals: [f, i, float, g, void, int]

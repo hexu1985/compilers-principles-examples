@@ -21,7 +21,7 @@ class DefRefPhase : public CymbolBaseListener {
 private:
     SymbolTable* symtab=nullptr;
     Scope* currentScope=nullptr;
-    std::vector<Scope*> localScopeList;
+    std::vector<Scope*> scopeList;
     std::vector<Symbol*> symbolList;  // Track all created symbols for cleanup
     std::stack<bool> inStructScope;   // Track if we're inside a struct declaration
 
@@ -162,11 +162,11 @@ public:
 
     ~DefRefPhase() {
         // Clean up dynamically allocated scopes
-        for (auto* scope : localScopeList) {
+        for (auto* scope : scopeList) {
             delete scope;
         }
-        localScopeList.clear();
-        
+        scopeList.clear();
+
         // Clean up dynamically allocated symbols
         for (auto* sym : symbolList) {
             delete sym;
@@ -178,8 +178,8 @@ public:
     void enterBlock(CymbolParser::BlockContext* ctx) override {
         // Push scope
         auto* localScope = new LocalScope(currentScope);
+        scopeList.push_back(localScope);
         currentScope = localScope;
-        localScopeList.push_back(localScope);
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
@@ -196,8 +196,8 @@ public:
         std::cout << "line " << id->getLine() << ": def struct " << id->getText() << std::endl;
         
         auto* ss = new StructSymbol(id->getText(), currentScope);
-        currentScope->define(ss); // Define struct in current scope
         symbolList.push_back(ss);
+        currentScope->define(ss); // Define struct in current scope
         currentScope = ss;       // Set current scope to struct scope
         inStructScope.push(true);
     }
@@ -217,8 +217,8 @@ public:
     
         Type* retType = getType(ctx->type());
         MethodSymbol* ms = new MethodSymbol(id->getText(), retType, currentScope);
-        currentScope->define(ms); // Define method in current scope
         symbolList.push_back(ms);
+        currentScope->define(ms); // Define method in current scope
         currentScope = ms;       // Set current scope to method scope
 
         // Process formal parameters
@@ -233,8 +233,8 @@ public:
                 Type* paramType = getType(types[i]);
 
                 auto* vs = new VariableSymbol(paramName, paramType);
-                currentScope->define(vs);
                 symbolList.push_back(vs);
+                currentScope->define(vs);
 
                 std::cout << "line " << paramId->getLine() << ": def " 
                           << paramName << std::endl;
@@ -260,8 +260,8 @@ public:
     
         Type* tsym = getType(ctx->type());
         auto* vs = new VariableSymbol(id->getText(), tsym);
-        currentScope->define(vs);
         symbolList.push_back(vs);
+        currentScope->define(vs);
 
         // Handle initializer expression if present
         if (!isFieldDecl) {

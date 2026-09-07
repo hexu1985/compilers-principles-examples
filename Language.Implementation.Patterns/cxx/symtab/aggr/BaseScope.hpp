@@ -15,13 +15,6 @@ public:
     BaseScope(Scope* parent = nullptr) 
         : enclosingScope(parent) {}
 
-    ~BaseScope() override {
-        for (auto& item: symbols) {
-            auto symbol = item.second;
-            delete symbol;
-        }
-    }
-
     Symbol* resolve(const std::string& name) override {
         auto it = symbols.find(name);
         if (it != symbols.end()) {

@@ -116,8 +116,8 @@ public:
     void enterBlock(CymbolParser::BlockContext* ctx) override {
         // Push scope
         auto* localScope = new LocalScope(currentScope);
-        currentScope = localScope;
         scopeList.push_back(localScope);
+        currentScope = localScope;
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
