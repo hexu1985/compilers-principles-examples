@@ -1,17 +1,17 @@
 #pragma once
 
-#include "ScopeSymbol.hpp"
+#include "ScopedSymbol.hpp"
 #include <unordered_map>
 #include <string>
 #include <vector>
 
-class MethodSymbol : public ScopeSymbol {
+class MethodSymbol : public ScopedSymbol {
 private:
     std::unordered_map<std::string, Symbol*> orderedArgs;
 
 public:
     MethodSymbol(const std::string& name, Type* retType, Scope* parent)
-        : ScopeSymbol(name, retType, parent) {}
+        : ScopedSymbol(name, retType, parent) {}
 
     ~MethodSymbol() {
         for (auto& arg: orderedArgs) {

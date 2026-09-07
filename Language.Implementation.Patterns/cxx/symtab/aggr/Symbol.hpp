@@ -29,7 +29,7 @@ public:
             s = scope->getScopeName() + ".";
         }
         if (type != nullptr) {
-            return '<' + s + getName() + ":" + type->toString() + '>';
+            return '<' + s + getName() + ":" + type->getName() + '>';
         }
         return s + getName();
     }

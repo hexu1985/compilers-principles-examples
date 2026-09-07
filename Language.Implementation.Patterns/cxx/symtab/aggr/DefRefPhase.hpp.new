@@ -19,8 +19,8 @@ using namespace antlr4;
 
 class DefRefPhase : public CymbolBaseListener {
 private:
-    SymbolTable* symtab=nullptr;
-    Scope* currentScope=nullptr;
+    SymbolTable* symtab = nullptr;
+    Scope* currentScope = nullptr;
     std::vector<Scope*> localScopeList;
     std::vector<Symbol*> symbolList;  // Track all created symbols for cleanup
     std::stack<bool> inStructScope;   // Track if we're inside a struct declaration
@@ -175,6 +175,7 @@ public:
     }
     
     // S C O P E S
+    
     void enterBlock(CymbolParser::BlockContext* ctx) override {
         // Push scope
         auto* localScope = new LocalScope(currentScope);
@@ -216,7 +217,7 @@ public:
         std::cout << "line " << id->getLine() << ": def method " << id->getText() << std::endl;
     
         Type* retType = getType(ctx->type());
-        MethodSymbol* ms = new MethodSymbol(id->getText(), retType, currentScope);
+        auto* ms = new MethodSymbol(id->getText(), retType, currentScope);
         currentScope->define(ms); // Define method in current scope
         symbolList.push_back(ms);
         currentScope = ms;       // Set current scope to method scope
@@ -244,10 +245,11 @@ public:
 
     void exitMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
         std::cout << "args: " << currentScope->toString() << std::endl;
-        currentScope = currentScope->getEnclosingScope(); // pop arg scope
+        currentScope = currentScope->getEnclosingScope(); // Pop method scope
     }
     
     // D e f i n e  s y m b o l s
+    
     void enterVarDeclaration(CymbolParser::VarDeclarationContext* ctx) override {
         if (!ctx->ID()) return;
         
@@ -274,14 +276,16 @@ public:
     }
     
     // R e s o l v e  I D s
+    
     void enterStatement(CymbolParser::StatementContext* ctx) override {
         if (isAssignment(ctx)) {
+            // Handle assignment
+            handleAssignment(ctx);
+            
             // Handle right-hand side expression
             if (ctx->expression()) {
                 resolveExpression(ctx->expression());
             }
-			// Handle assignment
-            handleAssignment(ctx);
         } else {
             // Handle return statement
             if (ctx->expression()) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ScopeSymbol.hpp"
+#include "ScopedSymbol.hpp"
 #include "Type.hpp"
 #include <unordered_map>
 #include <string>
