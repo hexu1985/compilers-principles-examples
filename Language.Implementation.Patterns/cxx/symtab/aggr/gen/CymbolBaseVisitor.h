@@ -19,15 +19,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitStructDecl(CymbolParser::StructDeclContext *ctx) override {
+  virtual std::any visitStructDeclaration(CymbolParser::StructDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitFieldDecl(CymbolParser::FieldDeclContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitNestedStructDecl(CymbolParser::NestedStructDeclContext *ctx) override {
+  virtual std::any visitStructMember(CymbolParser::StructMemberContext *ctx) override {
     return visitChildren(ctx);
   }
 

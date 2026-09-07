@@ -282,48 +282,43 @@ CymbolParser::StructDeclarationContext::StructDeclarationContext(ParserRuleConte
   : ParserRuleContext(parent, invokingState) {
 }
 
+tree::TerminalNode* CymbolParser::StructDeclarationContext::ID() {
+  return getToken(CymbolParser::ID, 0);
+}
+
+std::vector<CymbolParser::StructMemberContext *> CymbolParser::StructDeclarationContext::structMember() {
+  return getRuleContexts<CymbolParser::StructMemberContext>();
+}
+
+CymbolParser::StructMemberContext* CymbolParser::StructDeclarationContext::structMember(size_t i) {
+  return getRuleContext<CymbolParser::StructMemberContext>(i);
+}
+
 
 size_t CymbolParser::StructDeclarationContext::getRuleIndex() const {
   return CymbolParser::RuleStructDeclaration;
 }
 
-void CymbolParser::StructDeclarationContext::copyFrom(StructDeclarationContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
-
-//----------------- StructDeclContext ------------------------------------------------------------------
-
-tree::TerminalNode* CymbolParser::StructDeclContext::ID() {
-  return getToken(CymbolParser::ID, 0);
-}
-
-std::vector<CymbolParser::StructMemberContext *> CymbolParser::StructDeclContext::structMember() {
-  return getRuleContexts<CymbolParser::StructMemberContext>();
-}
-
-CymbolParser::StructMemberContext* CymbolParser::StructDeclContext::structMember(size_t i) {
-  return getRuleContext<CymbolParser::StructMemberContext>(i);
-}
-
-CymbolParser::StructDeclContext::StructDeclContext(StructDeclarationContext *ctx) { copyFrom(ctx); }
-
-void CymbolParser::StructDeclContext::enterRule(tree::ParseTreeListener *listener) {
+void CymbolParser::StructDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<CymbolListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterStructDecl(this);
-}
-void CymbolParser::StructDeclContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<CymbolListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitStructDecl(this);
+    parserListener->enterStructDeclaration(this);
 }
 
-std::any CymbolParser::StructDeclContext::accept(tree::ParseTreeVisitor *visitor) {
+void CymbolParser::StructDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<CymbolListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStructDeclaration(this);
+}
+
+
+std::any CymbolParser::StructDeclarationContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CymbolVisitor*>(visitor))
-    return parserVisitor->visitStructDecl(this);
+    return parserVisitor->visitStructDeclaration(this);
   else
     return visitor->visitChildren(this);
 }
+
 CymbolParser::StructDeclarationContext* CymbolParser::structDeclaration() {
   StructDeclarationContext *_localctx = _tracker.createInstance<StructDeclarationContext>(_ctx, getState());
   enterRule(_localctx, 2, CymbolParser::RuleStructDeclaration);
@@ -337,7 +332,6 @@ CymbolParser::StructDeclarationContext* CymbolParser::structDeclaration() {
     exitRule();
   });
   try {
-    _localctx = _tracker.createInstance<CymbolParser::StructDeclContext>(_localctx);
     enterOuterAlt(_localctx, 1);
     setState(35);
     match(CymbolParser::T__0);
@@ -377,69 +371,43 @@ CymbolParser::StructMemberContext::StructMemberContext(ParserRuleContext *parent
   : ParserRuleContext(parent, invokingState) {
 }
 
+CymbolParser::TypeContext* CymbolParser::StructMemberContext::type() {
+  return getRuleContext<CymbolParser::TypeContext>(0);
+}
+
+tree::TerminalNode* CymbolParser::StructMemberContext::ID() {
+  return getToken(CymbolParser::ID, 0);
+}
+
+CymbolParser::StructDeclarationContext* CymbolParser::StructMemberContext::structDeclaration() {
+  return getRuleContext<CymbolParser::StructDeclarationContext>(0);
+}
+
 
 size_t CymbolParser::StructMemberContext::getRuleIndex() const {
   return CymbolParser::RuleStructMember;
 }
 
-void CymbolParser::StructMemberContext::copyFrom(StructMemberContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
-
-//----------------- FieldDeclContext ------------------------------------------------------------------
-
-CymbolParser::TypeContext* CymbolParser::FieldDeclContext::type() {
-  return getRuleContext<CymbolParser::TypeContext>(0);
-}
-
-tree::TerminalNode* CymbolParser::FieldDeclContext::ID() {
-  return getToken(CymbolParser::ID, 0);
-}
-
-CymbolParser::FieldDeclContext::FieldDeclContext(StructMemberContext *ctx) { copyFrom(ctx); }
-
-void CymbolParser::FieldDeclContext::enterRule(tree::ParseTreeListener *listener) {
+void CymbolParser::StructMemberContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<CymbolListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterFieldDecl(this);
-}
-void CymbolParser::FieldDeclContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<CymbolListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitFieldDecl(this);
+    parserListener->enterStructMember(this);
 }
 
-std::any CymbolParser::FieldDeclContext::accept(tree::ParseTreeVisitor *visitor) {
+void CymbolParser::StructMemberContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<CymbolListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStructMember(this);
+}
+
+
+std::any CymbolParser::StructMemberContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CymbolVisitor*>(visitor))
-    return parserVisitor->visitFieldDecl(this);
+    return parserVisitor->visitStructMember(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- NestedStructDeclContext ------------------------------------------------------------------
 
-CymbolParser::StructDeclarationContext* CymbolParser::NestedStructDeclContext::structDeclaration() {
-  return getRuleContext<CymbolParser::StructDeclarationContext>(0);
-}
-
-CymbolParser::NestedStructDeclContext::NestedStructDeclContext(StructMemberContext *ctx) { copyFrom(ctx); }
-
-void CymbolParser::NestedStructDeclContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<CymbolListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterNestedStructDecl(this);
-}
-void CymbolParser::NestedStructDeclContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<CymbolListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitNestedStructDecl(this);
-}
-
-std::any CymbolParser::NestedStructDeclContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CymbolVisitor*>(visitor))
-    return parserVisitor->visitNestedStructDecl(this);
-  else
-    return visitor->visitChildren(this);
-}
 CymbolParser::StructMemberContext* CymbolParser::structMember() {
   StructMemberContext *_localctx = _tracker.createInstance<StructMemberContext>(_ctx, getState());
   enterRule(_localctx, 4, CymbolParser::RuleStructMember);
@@ -459,7 +427,6 @@ CymbolParser::StructMemberContext* CymbolParser::structMember() {
       case CymbolParser::T__8:
       case CymbolParser::T__9:
       case CymbolParser::ID: {
-        _localctx = _tracker.createInstance<CymbolParser::FieldDeclContext>(_localctx);
         enterOuterAlt(_localctx, 1);
         setState(46);
         type();
@@ -471,7 +438,6 @@ CymbolParser::StructMemberContext* CymbolParser::structMember() {
       }
 
       case CymbolParser::T__0: {
-        _localctx = _tracker.createInstance<CymbolParser::NestedStructDeclContext>(_localctx);
         enterOuterAlt(_localctx, 2);
         setState(50);
         structDeclaration();

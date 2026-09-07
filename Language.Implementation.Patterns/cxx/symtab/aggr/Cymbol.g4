@@ -7,13 +7,13 @@ compilationUnit
 
 // 结构体声明
 structDeclaration
-    :   'struct' ID '{' structMember+ '}' ';' # StructDecl
+    :   'struct' ID '{' structMember+ '}' ';'
     ;
 
 // 结构体成员
 structMember
-    :   type ID ';' # FieldDecl
-    |   structDeclaration # NestedStructDecl
+    :   type ID ';'
+    |   structDeclaration
     ;
 
 // 方法声明
@@ -28,7 +28,7 @@ formalParameters
 type:   'float'
     |   'int'
     |   'void'
-    |   ID # StructType  // 结构体类型名
+    |   ID
     ;
 
 // 代码块

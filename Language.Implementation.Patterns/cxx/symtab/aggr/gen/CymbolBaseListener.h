@@ -19,14 +19,11 @@ public:
   virtual void enterCompilationUnit(CymbolParser::CompilationUnitContext * /*ctx*/) override { }
   virtual void exitCompilationUnit(CymbolParser::CompilationUnitContext * /*ctx*/) override { }
 
-  virtual void enterStructDecl(CymbolParser::StructDeclContext * /*ctx*/) override { }
-  virtual void exitStructDecl(CymbolParser::StructDeclContext * /*ctx*/) override { }
+  virtual void enterStructDeclaration(CymbolParser::StructDeclarationContext * /*ctx*/) override { }
+  virtual void exitStructDeclaration(CymbolParser::StructDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterFieldDecl(CymbolParser::FieldDeclContext * /*ctx*/) override { }
-  virtual void exitFieldDecl(CymbolParser::FieldDeclContext * /*ctx*/) override { }
-
-  virtual void enterNestedStructDecl(CymbolParser::NestedStructDeclContext * /*ctx*/) override { }
-  virtual void exitNestedStructDecl(CymbolParser::NestedStructDeclContext * /*ctx*/) override { }
+  virtual void enterStructMember(CymbolParser::StructMemberContext * /*ctx*/) override { }
+  virtual void exitStructMember(CymbolParser::StructMemberContext * /*ctx*/) override { }
 
   virtual void enterMethodDeclaration(CymbolParser::MethodDeclarationContext * /*ctx*/) override { }
   virtual void exitMethodDeclaration(CymbolParser::MethodDeclarationContext * /*ctx*/) override { }

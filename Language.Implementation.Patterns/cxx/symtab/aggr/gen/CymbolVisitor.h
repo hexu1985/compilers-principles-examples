@@ -21,11 +21,9 @@ public:
    */
     virtual std::any visitCompilationUnit(CymbolParser::CompilationUnitContext *context) = 0;
 
-    virtual std::any visitStructDecl(CymbolParser::StructDeclContext *context) = 0;
+    virtual std::any visitStructDeclaration(CymbolParser::StructDeclarationContext *context) = 0;
 
-    virtual std::any visitFieldDecl(CymbolParser::FieldDeclContext *context) = 0;
-
-    virtual std::any visitNestedStructDecl(CymbolParser::NestedStructDeclContext *context) = 0;
+    virtual std::any visitStructMember(CymbolParser::StructMemberContext *context) = 0;
 
     virtual std::any visitMethodDeclaration(CymbolParser::MethodDeclarationContext *context) = 0;
 

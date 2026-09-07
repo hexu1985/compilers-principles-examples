@@ -17,14 +17,11 @@ public:
   virtual void enterCompilationUnit(CymbolParser::CompilationUnitContext *ctx) = 0;
   virtual void exitCompilationUnit(CymbolParser::CompilationUnitContext *ctx) = 0;
 
-  virtual void enterStructDecl(CymbolParser::StructDeclContext *ctx) = 0;
-  virtual void exitStructDecl(CymbolParser::StructDeclContext *ctx) = 0;
+  virtual void enterStructDeclaration(CymbolParser::StructDeclarationContext *ctx) = 0;
+  virtual void exitStructDeclaration(CymbolParser::StructDeclarationContext *ctx) = 0;
 
-  virtual void enterFieldDecl(CymbolParser::FieldDeclContext *ctx) = 0;
-  virtual void exitFieldDecl(CymbolParser::FieldDeclContext *ctx) = 0;
-
-  virtual void enterNestedStructDecl(CymbolParser::NestedStructDeclContext *ctx) = 0;
-  virtual void exitNestedStructDecl(CymbolParser::NestedStructDeclContext *ctx) = 0;
+  virtual void enterStructMember(CymbolParser::StructMemberContext *ctx) = 0;
+  virtual void exitStructMember(CymbolParser::StructMemberContext *ctx) = 0;
 
   virtual void enterMethodDeclaration(CymbolParser::MethodDeclarationContext *ctx) = 0;
   virtual void exitMethodDeclaration(CymbolParser::MethodDeclarationContext *ctx) = 0;

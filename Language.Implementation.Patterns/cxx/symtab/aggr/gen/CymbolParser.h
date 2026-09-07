@@ -79,27 +79,16 @@ public:
   class  StructDeclarationContext : public antlr4::ParserRuleContext {
   public:
     StructDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    StructDeclarationContext() = default;
-    void copyFrom(StructDeclarationContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  StructDeclContext : public StructDeclarationContext {
-  public:
-    StructDeclContext(StructDeclarationContext *ctx);
-
     antlr4::tree::TerminalNode *ID();
     std::vector<StructMemberContext *> structMember();
     StructMemberContext* structMember(size_t i);
+
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   StructDeclarationContext* structDeclaration();
@@ -107,37 +96,16 @@ public:
   class  StructMemberContext : public antlr4::ParserRuleContext {
   public:
     StructMemberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    StructMemberContext() = default;
-    void copyFrom(StructMemberContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  FieldDeclContext : public StructMemberContext {
-  public:
-    FieldDeclContext(StructMemberContext *ctx);
-
     TypeContext *type();
     antlr4::tree::TerminalNode *ID();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  NestedStructDeclContext : public StructMemberContext {
-  public:
-    NestedStructDeclContext(StructMemberContext *ctx);
-
     StructDeclarationContext *structDeclaration();
+
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   StructMemberContext* structMember();
