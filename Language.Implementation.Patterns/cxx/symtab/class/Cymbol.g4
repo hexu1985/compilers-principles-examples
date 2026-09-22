@@ -1,12 +1,9 @@
 grammar Cymbol;
 
-// 解析器规则
-
 compilationUnit
     :   (classDefinition | varDeclaration | methodDeclaration)+ EOF
     ;
 
-// 类定义
 classDefinition
     :   'class' ID superClass? '{' classMember+ '}' ';'
     ;
@@ -15,14 +12,12 @@ superClass
     :   ':' 'public' ID
     ;
 
-// 类成员
 classMember
-    :   type ID ('=' expression)? ';'
-    |   methodDeclaration
-    |   'public' ':'
+    :   type ID ('=' expression)? ';'        # fieldMember
+    |   methodDeclaration                    # methodMember
+    |   'public' ':'                         # accessSpec
     ;
 
-// 方法声明
 methodDeclaration
     :   type ID '(' formalParameters? ')' block
     ;
@@ -31,19 +26,16 @@ formalParameters
     :   type ID (',' type ID)*
     ;
 
-type
-    :   'float'
+type:   'float'
     |   'int'
     |   'void'
-    |   ID // class type name
+    |   ID
     ;
 
-// 代码块
 block
     :   '{' statement* '}'
     ;
 
-// 变量声明
 varDeclaration
     :   type ID ('=' expression)? ';'
     ;
@@ -57,7 +49,7 @@ statement
         |
         )
         ';'
-    |   ';' // empty statement
+    |   ';'
     ;
 
 expressionList
@@ -70,10 +62,9 @@ expression
     ;
 
 addExpression
-    :   postfixExpression ('+' postfixExpression)*
+    :   postfixExpression ( '+' postfixExpression )*
     ;
 
-// 函数调用和字段访问
 postfixExpression
     :   primary
         (   '.' ID '(' expressionList ')'
@@ -90,21 +81,8 @@ primary
     |   '(' expression ')'
     ;
 
-// 词法分析器规则
-
-ID  :   LETTER (LETTER | [0-9])*
-    ;
-
-fragment
-LETTER  :   [a-zA-Z]
-    ;
-
-INT :   [0-9]+
-    ;
-
-WS  :   [ \r\t\n]+ -> skip
-    ;
-
-SL_COMMENT
-    :   '//' ~[\r\n]* '\r'? '\n' -> skip
-    ;
+ID  :   LETTER (LETTER | [0-9])* ;
+fragment LETTER : [a-zA-Z] ;
+INT :   [0-9]+ ;
+WS  :   [ \r\t\n]+ -> skip ;
+SL_COMMENT : '//' ~[\r\n]* '\r'? '\n' -> skip ;
