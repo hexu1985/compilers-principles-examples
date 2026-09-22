@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Scope.hpp"
 #include "Symbol.hpp"
 #include "tsl/ordered_map.h"
@@ -7,7 +6,7 @@
 
 class BaseScope : public Scope {
 protected:
-    Scope* enclosingScope=nullptr; // null if global (outermost) scope
+    Scope* enclosingScope = nullptr;
     tsl::ordered_map<std::string, Symbol*> symbols;
 
 public:
@@ -20,16 +19,20 @@ public:
             return it->second;
         }
         // if not here, check any enclosing scope
-        if (enclosingScope != nullptr) {
-            return enclosingScope->resolve(name);
+        if (getParentScope() != nullptr) {
+            return getParentScope()->resolve(name);
         }
         return nullptr; // not found
     }
 
     void define(Symbol* sym) override {
         symbols[sym->name] = sym;
-        sym->scope = this; // track the scope in each symbol
+        sym->scope = this;
     }
+
+	Scope* getParentScope() const override {
+		return getEnclosingScope();
+	}
 
     Scope* getEnclosingScope() const override { 
         return enclosingScope; 
