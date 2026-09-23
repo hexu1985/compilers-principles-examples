@@ -29,8 +29,8 @@ public:
     Scope* currentScope = nullptr;
 
     // 记录 scope 对象的所有权
-    std::vector<Scope*> ownedScopes;
-    std::vector<Symbol*> ownedSymbols;
+    std::vector<Scope*> scopeList;
+    std::vector<Symbol*> symbolList;
 
     // 关键：每个 ID 节点对应的 scope（替代 CymbolAST.scope）
     std::unordered_map<tree::TerminalNode*, Scope*> idScopes;
@@ -43,13 +43,28 @@ public:
 public:
     DefPhase(SymbolTable* symtab) : symtab(symtab), currentScope(symtab->globals) {}
 
+
+    ~DefPhase() {
+        // Clean up dynamically allocated scopes
+        for (auto* scope : scopeList) {
+            delete scope;
+        }
+        scopeList.clear();
+
+        // Clean up dynamically allocated symbols
+        for (auto* sym : symbolList) {
+            delete sym;
+        }
+        symbolList.clear();
+    }
+
     // ---------------------------------------------------------------
     // S C O P E S : enterBlock / exitBlock
     // ---------------------------------------------------------------
     void enterBlock(CymbolParser::BlockContext* ctx) override {
         auto* ls = new LocalScope(currentScope);
         currentScope = ls;
-        ownedScopes.push_back(ls);
+        scopeList.push_back(ls);
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
@@ -82,7 +97,7 @@ public:
         currentScope->define(cs);
         currentScope = cs;   // 进入 class 作用域
 
-        ownedSymbols.push_back(cs);
+        symbolList.push_back(cs);
     }
 
     void exitClassDefinition(CymbolParser::ClassDefinitionContext* ctx) override {
@@ -109,7 +124,7 @@ public:
         currentScope->define(ms);
         currentScope = ms;   // 进入 method 作用域
 
-        ownedSymbols.push_back(ms);
+        symbolList.push_back(ms);
     }
 
     void exitMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
@@ -133,7 +148,7 @@ public:
         idSymbols[idNode] = vs;
         currentScope->define(vs);
 
-        ownedSymbols.push_back(vs);
+        symbolList.push_back(vs);
     }
 
     // 处理字段：classMember 的 #fieldMember 分支
@@ -150,7 +165,7 @@ public:
         idSymbols[idNode] = vs;
         currentScope->define(vs);
 
-        ownedSymbols.push_back(vs);
+        symbolList.push_back(vs);
     }
 
     // 处理形参：formalParameters 里的 type ID
@@ -167,7 +182,7 @@ public:
             idSymbols[idNode] = vs;
             currentScope->define(vs);
 
-            ownedSymbols.push_back(vs);
+            symbolList.push_back(vs);
         }
     }
 

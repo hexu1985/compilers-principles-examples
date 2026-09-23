@@ -138,50 +138,62 @@ public:
     // ---------------------------------------------------------------
     void enterPrimary(CymbolParser::PrimaryContext* ctx) override {
         if (ctx->ID()) {
-            resolveIDNode(ctx->ID());
+            auto* id = ctx->ID();
+            if (idSymbols->find(id) != idSymbols->end()) return;  // ← 已解析过就跳过
+            resolveIDNode(id);
         }
-        // 'this' 的处理：从当前 scope 往上找 enclosing class
         if (ctx->getText() == "this") {
-            ClassSymbol* cs = SymbolTable::getEnclosingClass(currentScope);
-            // 可以记录到一个类型 map 里，供 member 解析使用
+            // ...
         }
     }
 
     void enterPostfixExpression(CymbolParser::PostfixExpressionContext* ctx) override {
-        // 遍历 children，找 .ID 形式
-        // 简化：把所有 ID 都解析一遍（已解析的会重新解析，输出会重复）
-        // 更精确的做法是只解析 .ID 里的 ID。
         auto* primary = ctx->primary();
-        if (!primary || !primary->ID()) return;
+        if (!primary) return;
 
-        // 起点：primary 的 ID
-        tree::TerminalNode* firstId = primary->ID();
-        Symbol* s = resolveIDNode(firstId);
-        if (!s) return;
+        Type* currentType = nullptr;
+        Symbol* baseSym = nullptr;
+        std::string baseName;
 
-        Type* currentType = s->type;
+        if (primary->ID()) {
+            // 普通 ID：a.x
+            baseSym = resolveIDNode(primary->ID());
+            if (!baseSym) return;
+            currentType = baseSym->type;
+            baseName = baseSym->getSymbolName();
+        } else if (primary->getText() == "this") {
+            // this.x —— 从当前 scope 往上找 enclosing class
+            ClassSymbol* cs = SymbolTable::getEnclosingClass(currentScope);
+            if (!cs) return;
+            baseSym = cs;
+            currentType = cs;
+            baseName = "this";
+        } else {
+            return;
+        }
 
-        // 遍历后缀 .ID
+        // 遍历 .ID 后缀
         for (size_t i = 0; i < ctx->children.size(); i++) {
             auto* child = ctx->children[i];
             if (child->getText() == ".") {
-                if (i + 1 < ctx->children.size()) {
-                    auto* fieldNode = dynamic_cast<tree::TerminalNode*>(ctx->children[i + 1]);
-                    if (!fieldNode) continue;
+                if (i + 1 >= ctx->children.size()) continue;
+                auto* fieldNode = dynamic_cast<tree::TerminalNode*>(ctx->children[i + 1]);
+                if (!fieldNode) continue;
 
-                    std::string fieldName = fieldNode->getText();
-                    auto* cs = dynamic_cast<ClassSymbol*>(currentType);
-                    if (cs) {
-                        Symbol* fieldSym = cs->resolveMember(fieldName);
-                        // 记录 field 节点的 symbol
-                        (*idSymbols)[fieldNode] = fieldSym;
+                std::string fieldName = fieldNode->getText();
+                auto* cs = dynamic_cast<ClassSymbol*>(currentType);
+                if (cs) {
+                    Symbol* fieldSym = cs->resolveMember(fieldName);
+                    (*idSymbols)[fieldNode] = fieldSym;
 
-                        std::cout << "line " << fieldNode->getSymbol()->getLine()
-                                  << ": resolve " << s->getSymbolName() << "." << fieldName
-                                  << " to " << (fieldSym ? fieldSym->toString() : "null")
-                                  << std::endl;
+                    std::cout << "line " << fieldNode->getSymbol()->getLine()
+                              << ": resolve " << baseName << "." << fieldName
+                              << " to " << (fieldSym ? fieldSym->toString() : "null")
+                              << std::endl;
 
-                        if (fieldSym) currentType = fieldSym->type;
+                    if (fieldSym) {
+                        currentType = fieldSym->type;
+                        baseName = baseName + "." + fieldName;
                     }
                 }
             }
