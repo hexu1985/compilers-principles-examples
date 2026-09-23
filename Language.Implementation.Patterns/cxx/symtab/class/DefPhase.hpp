@@ -29,8 +29,8 @@ public:
     Scope* currentScope = nullptr;
 
     // 记录 scope 对象的所有权
-    std::vector<std::unique_ptr<Scope>> ownedScopes;
-    std::vector<std::unique_ptr<Symbol>> ownedSymbols;
+    std::vector<Scope*> ownedScopes;
+    std::vector<Symbol*> ownedSymbols;
 
     // 关键：每个 ID 节点对应的 scope（替代 CymbolAST.scope）
     std::unordered_map<tree::TerminalNode*, Scope*> idScopes;
@@ -47,9 +47,9 @@ public:
     // S C O P E S : enterBlock / exitBlock
     // ---------------------------------------------------------------
     void enterBlock(CymbolParser::BlockContext* ctx) override {
-        auto ls = std::make_unique<LocalScope>(currentScope);
-        currentScope = ls.get();
-        ownedScopes.push_back(std::move(ls));
+        auto* ls = new LocalScope(currentScope);
+        currentScope = ls;
+        ownedScopes.push_back(ls);
     }
 
     void exitBlock(CymbolParser::BlockContext* ctx) override {
@@ -73,17 +73,16 @@ public:
             pendingSuperIds[ctx] = supNode;
         }
 
-        auto cs = std::make_unique<ClassSymbol>(nameTok->getText(), currentScope, nullptr);
-        ClassSymbol* csPtr = cs.get();
+        auto* cs = new ClassSymbol(nameTok->getText(), currentScope, nullptr);
 
         // 记录 name ID 的 symbol 和 scope
-        idSymbols[nameNode] = csPtr;
+        idSymbols[nameNode] = cs;
         idScopes[nameNode] = currentScope;
 
-        currentScope->define(csPtr);
-        currentScope = csPtr;   // 进入 class 作用域
+        currentScope->define(cs);
+        currentScope = cs;   // 进入 class 作用域
 
-        ownedSymbols.push_back(std::move(cs));
+        ownedSymbols.push_back(cs);
     }
 
     void exitClassDefinition(CymbolParser::ClassDefinitionContext* ctx) override {
@@ -104,14 +103,13 @@ public:
         // 这里先记录 ID 节点自己的 scope
         idScopes[idNode] = currentScope;
 
-        auto ms = std::make_unique<MethodSymbol>(idTok->getText(), nullptr, currentScope);
-        MethodSymbol* msPtr = ms.get();
+        auto* ms = new MethodSymbol(idTok->getText(), nullptr, currentScope);
 
-        idSymbols[idNode] = msPtr;
-        currentScope->define(msPtr);
-        currentScope = msPtr;   // 进入 method 作用域
+        idSymbols[idNode] = ms;
+        currentScope->define(ms);
+        currentScope = ms;   // 进入 method 作用域
 
-        ownedSymbols.push_back(std::move(ms));
+        ownedSymbols.push_back(ms);
     }
 
     void exitMethodDeclaration(CymbolParser::MethodDeclarationContext* ctx) override {
@@ -131,11 +129,11 @@ public:
 
         idScopes[idNode] = currentScope;
 
-        auto vs = std::make_unique<VariableSymbol>(idTok->getText(), nullptr);
-        idSymbols[idNode] = vs.get();
-        currentScope->define(vs.get());
+        auto* vs = new VariableSymbol(idTok->getText(), nullptr);
+        idSymbols[idNode] = vs;
+        currentScope->define(vs);
 
-        ownedSymbols.push_back(std::move(vs));
+        ownedSymbols.push_back(vs);
     }
 
     // 处理字段：classMember 的 #fieldMember 分支
@@ -148,11 +146,11 @@ public:
 
         idScopes[idNode] = currentScope;
 
-        auto vs = std::make_unique<VariableSymbol>(idTok->getText(), nullptr);
-        idSymbols[idNode] = vs.get();
-        currentScope->define(vs.get());
+        auto* vs = new VariableSymbol(idTok->getText(), nullptr);
+        idSymbols[idNode] = vs;
+        currentScope->define(vs);
 
-        ownedSymbols.push_back(std::move(vs));
+        ownedSymbols.push_back(vs);
     }
 
     // 处理形参：formalParameters 里的 type ID
@@ -165,11 +163,11 @@ public:
 
             idScopes[idNode] = currentScope;
 
-            auto vs = std::make_unique<VariableSymbol>(idTok->getText(), nullptr);
-            idSymbols[idNode] = vs.get();
-            currentScope->define(vs.get());
+            auto* vs = new VariableSymbol(idTok->getText(), nullptr);
+            idSymbols[idNode] = vs;
+            currentScope->define(vs);
 
-            ownedSymbols.push_back(std::move(vs));
+            ownedSymbols.push_back(vs);
         }
     }
 
